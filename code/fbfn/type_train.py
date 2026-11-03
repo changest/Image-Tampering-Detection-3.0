@@ -146,6 +146,8 @@ def main():
     ap.add_argument("--ema_decay", type=float, default=0.999)
     ap.add_argument("--warmup_epochs", type=int, default=2)
     ap.add_argument("--label_smooth", type=float, default=0.05)
+    ap.add_argument("--type_boost", default="",
+                    help="类型类别权重倍率，如 2:1.5,1:1.2（类别:倍率，逗号分隔）")
     ap.add_argument("--grad_clip", type=float, default=1.0)
     ap.add_argument("--resume", default="", help="从指定 raw 权重续训")
     ap.add_argument("--resume_ema", default="", help="配套 EMA 权重（可选）")
@@ -195,6 +197,10 @@ def main():
     cnt = Counter(types)
     w = torch.tensor([len(types) / (4 * cnt.get(k, 1)) for k in range(4)],
                      dtype=torch.float32, device=device)
+    if args.type_boost:
+        for kv in args.type_boost.split(","):
+            k, v = kv.split(":")
+            w[int(k)] *= float(v)
     if rank == 0:
         print("type counts", dict(cnt), "weights", [round(v, 2) for v in w.tolist()], flush=True)
 
