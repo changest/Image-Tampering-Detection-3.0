@@ -16,3 +16,6 @@ data/
 *.zip
 *.tar
 *.tar.gz
+
+# 第三方方法源码（各自独立仓库）
+code/experiments/methods/*/
