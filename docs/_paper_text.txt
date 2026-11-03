@@ -1,0 +1,761 @@
+
+
+===== 第1页 =====
+基于四分支注意力融合网络的图像篡改定位方法 
+Abstract 
+随着数字图像编辑技术和生成式人工智能的飞速发展，图像篡改已成为威胁社会信任与司法公
+正的严峻挑战。现有检测方法受限于单一特征维度、全局与局部建模的固有矛盾以及深度学习
+方法可解释性不足等问题。本文提出四分支注意力融合网络（Four-Branch Fusion Network, 
+FBFN），将可训练深度特征与基于信号处理的显式手工特征通过通道-空间双重注意力机制进
+行自适应融合，实现像素级篡改定位。该网络集成四个并行分支：基于UNet++/ResNet34 的
+CNN 分支捕捉局部纹理异常，基于Swin Transformer 的ViT 分支建模全局上下文一致性，
+ELA+SRM 噪声分支显式提取JPEG 压缩残差与高频噪声响应（特征提取过程无需训练参数），
+基于MobileNetV3 的颜色分支在Lab 色彩空间识别颜色分布异常。在包含12,435 张图像的混
+合数据集上，FBFN 取得mIoU 78.2%、F1-Score 82.5%、AUC 91.7%的检测性能，优于MVSS-
+Net、SPAN、ManTra-Net 和ObjectFormer 等代表性方法，同时以35.8M 参数量和24.6 FPS 推
+理速度展现了实际部署潜力。 
+Introduction 
+数字图像作为信息传播的核心载体，其真实性直接关系到新闻报道的可信度、司法鉴定的
+有效性以及社会舆论的健康发展。然而，图像编辑工具的普及和深度生成技术的突破使得高质
+量的图像篡改变得前所未有的便捷，篡改后的图像在社交媒体虚假信息传播、恶意诽谤和版权
+侵犯等场景中被广泛利用[1]。这一现实对图像完整性验证和数字取证技术提出了迫切需求[2]。 
+图像篡改检测的核心困难在于篡改操作在多个信号维度上留下的痕迹具有互补性和条件性。
+传统方法从单一维度入手：Fridrich 等[3]利用JPEG 压缩伪影中的不一致性检测复制-移动篡改；
+Fridrich 和Kodovsky[4]提出的空间富模型（SRM）通过高通滤波器提取噪声残差特征；色彩一
+致性分析[5]通过检测图像不同区域在颜色统计特性上的差异来识别拼接篡改。这些基于手工特
+征的方法具有良好的物理可解释性，但在面对模糊、重采样等后处理操作时鲁棒性不足，且难
+以处理复杂的语义级篡改。 
+深度学习技术为篡改检测开辟了新的路径。ManTra-Net[6]通过多任务学习实现端到端的篡
+改检测与定位；PSCC-Net[7]采用渐进式时空通道相关网络提取多尺度上下文特征；
+ObjectFormer[8]引入对象级Transformer 建模篡改区域的语义关系。在多模态融合方面，
+MVSS-Net[9]联合利用RGB 图像、噪声特征和边缘信息实现多视图融合；SPAN[10]结合语义
+特征与噪声分析进行篡改定位。这些方法虽然在性能上取得了进步，但仍存在三个核心局限。 
+
+
+===== 第2页 =====
+其一，现有融合方法局限于深度特征之间的内部融合，未将深度学习的表达能力与手工特
+征的物理可解释性有机结合。MVSS-Net 虽然引入了噪声分支，但其噪声特征仍通过深度网络
+隐式提取，而非显式利用信号处理领域已验证有效的ELA 或SRM 等方法。其二，基于CNN
+的方法对全局上下文信息的建模能力有限，而标准Vision Transformer 的二次方复杂度使其难
+以在资源受限设备上部署。其三，纯端到端的深度学习方法缺乏中间过程的可解释性，对训练
+分布外的篡改类型泛化能力不足。 
+为解决上述问题，本文提出四分支注意力融合网络（FBFN）。该方法的核心思想是：不同
+篡改操作在不同信号维度上留下互补痕迹，只有同时覆盖局部纹理、全局上下文、噪声残差和
+颜色分布四个维度，并通过数据驱动的注意力机制自适应确定各维度在不同空间位置的贡献权
+重，才能实现鲁棒的像素级篡改定位。本文的主要贡献包括：(1) 提出四分支并行架构，在统
+一框架中融合两个可训练深度分支与两个基于信号处理的显式特征分支；(2) 设计通道-空间双
+重注意力融合模块，实现多源异质特征的自适应加权；(3) 采用Focal Loss、Dice Loss 和
+Tversky Loss 的组合损失函数，有效处理篡改分割中的严重类别不平衡问题；(4) 通过轻量级骨
+干网络（Swin-T 和MobileNetV3-Small）实现高精度与高效率的平衡。实验表明，FBFN 在混
+合数据集上取得了mIoU 78.2%、F1-Score 82.5%的结果，优于所选对比方法。 
+Related Work 
+基于手工特征的篡改检测方法 
+早期篡改检测研究主要依赖手工设计的信号级特征。Fridrich 等[3]首先提出利用离散余弦
+变换（DCT）系数的统计特性检测JPEG 图像中的复制-移动篡改。Krawetz[11]提出误差水平分
+析（Error Level Analysis, ELA），通过对图像进行指定质量因子的JPEG 重压缩并计算与原图的
+差值，篡改区域由于经历不同次数压缩而呈现异常的误差水平。Fridrich 和Kodovsky[4]提出的
+空间富模型（SRM）利用高通滤波器抑制图像内容并增强统计噪声模式的差异，该方法源自隐
+写分析领域，被广泛应用于篡改检测。色彩一致性分析方法[5]从图像区域间的颜色分布差异出
+发，指出篡改区域与原始区域在颜色统计特性上往往存在可检测的不一致性。 
+这些方法具有明确的物理意义和良好的可解释性，但各自针对特定类型的篡改痕迹设计。
+当篡改者使用模糊、重采样或颜色校正等后处理手段时，单一维度的手工特征方法性能明显下
+降。更重要的是，这些方法难以处理语义级篡改（如深度学习生成的局部替换），因为其检测
+依赖特定的信号层面假设。 
+基于深度学习的篡改检测方法 
+深度学习方法通过端到端训练自动学习判别性特征，克服了手工特征的设计局限。
+ManTra-Net[6]采用VGG 和LSTM 的组合架构实现多任务学习，能够在不需要篡改类型先验的
+
+
+===== 第3页 =====
+情况下检测和定位多种篡改。Bayar 和Stamm[12]设计了约束卷积层，强制第一层滤波器学习
+预测残差而非图像内容。PSCC-Net[7]构建金字塔结构逐步提取从低级到高级的时空通道特征。
+ObjectFormer[8]利用Vision Transformer 的全局自注意力机制在对象级别建模篡改区域的语义关
+联，在大面积拼接检测中表现突出。 
+然而，这些方法通常在单一特征空间内进行检测。CNN 方法擅长局部纹理分析但对全局
+上下文建模不足；Transformer 方法虽然具有全局感受野，但计算复杂度高且对精细边界的定位
+能力有限。 
+多模态融合方法 
+近年来，研究者开始探索多源信息融合以提升检测鲁棒性。MVSS-Net[9]将RGB 图像、
+BayarConv 噪声流和Sobel 边缘流三者融合，通过多视图监督学习提升定位精度。SPAN[10]结
+合语义分割分支和噪声分析分支，利用空间金字塔注意力机制进行特征聚合。这些方法证明了
+多源融合的有效性，但其"多源"仍局限于深度网络内部提取的不同中间表示，并未真正引入独
+立于训练过程的显式手工特征。 
+本文方法与现有工作的关键区别在于：FBFN 在统一框架中同时部署两个可训练深度分支
+（CNN 和Swin Transformer）与两个基于信号处理的显式特征分支（ELA+SRM 噪声分析和
+Lab 空间颜色熵）。深度分支提供强大的语义表达能力，显式特征分支提供物理可解释的信号
+级证据，四者通过注意力机制自适应融合，在性能和可解释性之间取得平衡。 
+方法 
+特征类型 
+全局建模 
+可解释性 
+端到端 
+融合维度 
+ManTra-Net 
+深度(CNN) 
+部分(LSTM) 
+低 
+是 
+单一 
+SPAN 
+深度(CNN)+噪声 
+部分 
+中 
+是 
+二维 
+MVSS-Net 
+深度(CNN)+噪声+边
+缘 
+部分 
+中 
+是 
+三维 
+ObjectFormer 
+深度(ViT) 
+强(自注意力) 
+低 
+是 
+单一 
+FBFN(本文) 
+深度(CNN+ViT)+噪
+声+颜色 
+强(Swin-T) 
+中-高 
+是 
+四维 
+表1：现有方法特征对比总结。融合维度指独立特征提取分支的数量 
+Method 
+网络整体架构 
+FBFN 采用四分支并行提取、注意力融合的整体架构（图1）。输入图像 I \in 
+\mathbb{R}^{H \times W \times 3} 同时送入四个独立的特征提取分支，各分支独立输出与输入
+同尺寸的单通道篡改概率图，随后通过通道-空间双重注意力模块进行自适应融合，最终输出
+
+
+===== 第4页 =====
+像素级篡改定位结果。这一设计确保了每个分支可以独立训练和分析，同时融合阶段充分利用
+各分支的互补信息。 
+ 
+图1：四分支融合网络（FBFN）整体架构。四个并行分支分别提取局部纹理、全局上下文、噪声残差和颜色分
+布特征，通过通道-空间双重注意力模块自适应融合后输出像素级篡改定位结果。 
+CNN 分支：局部纹理与边界提取 
+CNN 分支采用UNet++架构[13]，以ImageNet 预训练的ResNet34[14]作为编码器骨干。
+UNet++通过密集跳跃连接（dense skip connections）将编码器不同层级的特征与解码器逐步融
+合，有效捕捉从低级纹理到高级语义的多尺度信息。该分支的核心优势在于对篡改边界的精细
+定位能力：编码器提取篡改区域与原始区域在纹理模式上的局部差异，解码器通过多层级特征
+融合逐步恢复精细的空间分辨率。 
+ResNet34 共包含约21.3M 参数，通过4 个残差块组（channels 分别为64, 128, 256, 512）逐
+步降低空间分辨率并增加特征通道数。UNet++解码器通过嵌套跳跃路径将浅层的空间细节与
+深层的语义信息融合，最终输出与输入同尺寸的单通道篡改概率图。 
+ViT 分支：全局上下文建模 
+ViT 分支采用Swin Transformer（Tiny 配置）[15]作为编码器，SegFormer 的MLP 解码器
+[16]作为上采样模块。与标准Vision Transformer 的全局自注意力不同，Swin Transformer 通过
+滑动窗口机制将自注意力限制在局部窗口内（窗口内复杂度为 O(M^2)，M 为窗口大小），并通
+过窗口移位实现跨窗口信息交互，使整体计算复杂度相对于图像分辨率为线性 O(HW)，而非
+标准Transformer 的 O((HW)^2)。 
+Swin-T（Tiny 配置）包含约7.4M 参数，其层次化设计产生分辨率逐步降低的多尺度特征
+
+
+===== 第5页 =====
+（1/4, 1/8, 1/16, 1/32 输入尺寸）。SegFormer 的轻量级全连接解码器接收这四个尺度的特征，通
+过MLP 融合和上采样恢复至输入分辨率。该分支的核心价值在于检测大面积篡改区域的全局
+一致性异常：当篡改区域与周围背景在全局统计特性上存在不一致时，自注意力机制能够有效
+捕捉这种远距离依赖关系。 
+ELA+SRM 噪声分支：压缩痕迹与噪声残差提取 
+该分支的特征提取过程完全基于信号处理方法，不包含可训练参数，但其输出通过融合模
+块的可训练注意力机制参与端到端优化。处理流程包含两个并行的特征提取路径。 
+误差水平分析（ELA）通过对输入图像进行指定质量因子 Q=90 的JPEG 重压缩，计算重
+压缩图像与原图的像素级绝对差值： 
+ELA(x, y) = |I(x, y) - JPEG(I, Q=90)(x, y)|    (1) 
+原理在于：原始区域经过一致的压缩历史，重压缩后变化较小；而篡改区域由于经历了不
+同的压缩路径，重压缩后产生较大的误差信号。 
+空间富模型（SRM）采用三个预设的 5 \times 5 高通滤波器提取噪声残差： 
+N_k(x, y) = |F_k * I(x, y)|, \quad k = 1, 2, 3    (2) 
+滤波器 
+尺寸 
+类型 
+核矩阵中心值 
+功能描述 
+F_1 
+5×5 
+一阶边缘 
+-1 
+检测水平/垂直边缘噪声残差 
+F_2 
+5×5 
+二阶边缘 
+2 
+检测二阶微分噪声模式 
+F_3 
+5×5 
+三阶边缘 
+-3 
+提取高频纹理不一致性 
+ 
+表2：SRM 高通滤波器核参数。滤波器权重满足零和约束 \sum_{i,j} F_k(i,j) = 0，确保只响应高频信号。 
+三个滤波器分别捕捉一阶、二阶和三阶噪声模式，满足零和约束以确保仅响应高频信号成
+分。ELA 特征与三通道SRM 响应拼接后，经归一化处理输出四通道噪声特征图。该分支的核
+心优势在于物理可解释性：ELA 响应直接对应压缩不一致区域，SRM 响应反映噪声统计特性
+的局部异常。 
+颜色特征分支：色彩分布异常检测 
+颜色特征分支旨在检测篡改区域与原始区域在色彩分布上的不一致性。处理流程首先将
+RGB 图像转换至Lab 色彩空间，然后在 16 \times 16 的滑动窗口（步长8，重叠率50%）内计
+算各通道的局部色彩直方图熵： 
+H(x, y) = -\sum_{i=1}^{B} p_i \log_2 p_i    (3) 
+
+
+===== 第6页 =====
+其中 p_i 为第 i 个直方图bin 的概率。熵值的空间突变指示颜色分布的局部不一致性。计
+算得到的三通道熵图（L/a/b 各一通道）输入MobileNetV3-Small[17]进行特征学习和上采样，
+输出单通道篡改概率图。 
+MobileNetV3-Small 仅包含约2.5M 参数，采用深度可分离卷积和倒残差结构实现极低的计
+算开销。该分支的选择基于以下考虑：色彩熵提供了独立于纹理和噪声的互补视角，而
+MobileNetV3-Small 的轻量级设计确保增加该分支不会显著增加整体计算负担。 
+通道-空间双重注意力融合模块 
+四个分支各自输出单通道特征图 \mathbf{f}_{cnn}, \mathbf{f}_{vit}, \mathbf{f}_{ela}, 
+\mathbf{f}_{color} \in \mathbb{R}^{H \times W \times 1}，融合模块需要解决的核心问题是：不
+同类型的篡改在不同空间位置上，各分支的贡献程度是动态变化的。 
+融合模块首先在通道维度拼接四个特征图，得到 \mathbf{F} \in \mathbb{R}^{H \times W 
+\times 4}。通道注意力通过全局平均池化和两层MLP 生成通道权重向量： 
+\boldsymbol{\alpha} = \text{Softmax}(\text{MLP}(\text{GAP}(\mathbf{F}))) \in 
+\mathbb{R}^{4}    (4) 
+空间注意力在通道加权后的特征上，通过 3 \times 3 卷积和Sigmoid 激活生成逐像素的空
+间权重图。最终的融合特征经 1 \times 1 卷积映射为单通道输出，通过Sigmoid 函数生成篡改
+概率图。 
+双重注意力机制的设计动机在于：通道注意力实现全局层面的分支重要性分配（例如，对
+JPEG 压缩篡改场景自动增大ELA 分支权重），空间注意力实现逐像素层面的精细调整（例如，
+在篡改边界区域增大CNN 分支权重）。 
+组合损失函数 
+训练采用多级监督策略，总损失函数定义为： 
+L = L_{final} + 0.5 \cdot L_{att} + 0.5 \cdot (L_{cnn} + L_{vit} + L_{ela} + L_{color})    (5) 
+其中 L_{final} 为融合输出的损失，L_{att} 为注意力模块中间输出的辅助损失，L_{cnn}, 
+L_{vit}, L_{ela}, L_{color} 为各分支独立输出的辅助损失。多级监督确保每个分支都获得有效
+的梯度信号。 
+每个损失项均为Focal Loss、Dice Loss 和Tversky Loss 的加权组合： 
+L_i = \lambda_1 L_{Focal} + \lambda_2 L_{Dice} + \lambda_3 L_{Tversky}    (6) 
+其中权重系数分别为 \lambda_1 = 1.0、\lambda_2 = 1.0、\lambda_3 = 0.5，通过验证集上的
+网格搜索确定。 
+
+
+===== 第7页 =====
+Focal Loss[18]通过 (1-p_t)^\gamma 调制因子解决类别不平衡问题（篡改区域通常仅占图像
+面积的5%-30%），使训练聚焦于难以分类的像素。Dice Loss[19]直接优化F1-Score 的可微近似，
+对分割边界质量敏感。Tversky Loss[20]通过不对称权重参数 \alpha 和 \beta 控制精确率与召回
+率的平衡。三者互补：Focal Loss 处理类别不平衡，Dice Loss 优化整体分割质量，Tversky 
+Loss 精细调节精确率-召回率权衡。 
+Experiments 
+数据集与评价指标 
+实验在包含四个子集的混合数据集上进行，共计12,435 张图像，按80:20 比例随机划分为
+训练集（9,948 张）和验证集（2,487 张）。所有图像统一缩放至 384 \times 384 像素。 
+数据集 
+图像数 
+篡改类型 
+来源 
+用途 
+CASIA v2.0 
+5,123 
+复制-移动、拼接 
+公开数据集 
+训练+验证 
+Columbia/ImSplice 
+912 
+拼接 
+公开数据集 
+训练+验证 
+合成数据(Copy-Move) 
+3,200 
+复制-移动 
+自动生成 
+训练+验证 
+合成数据(Removal) 
+3,200 
+目标移除 
+自动生成 
+训练+验证 
+合计 
+12,435 
+4 种 
+— 
+训练:验证=80:20 
+ 
+表3：数据集统计信息。训练集9,948 张，验证集2,487 张。 
+CASIA v2.0[21]是图像篡改检测领域最广泛使用的基准数据集之一，包含复制-移动和拼接
+两种篡改类型，每张图像附带像素级篡改掩码标注。Columbia/ImSplice 数据集提供高质量的拼
+接篡改样本。自建合成数据集通过自动化管线生成，涵盖复制-移动和目标移除篡改，确保训
+练样本的多样性和规模充足性。 
+评价指标包含五项：平均交并比（mIoU）衡量像素级分割精度；F1-Score 综合考虑精确
+率和召回率；Precision 和Recall 分别评估误检和漏检性能；AUC（曲线下面积）评估模型在不
+同阈值下的综合判别能力。 
+实验设置 
+参数 
+设置 
+输入图像尺寸 
+384×384 
+批量大小 
+4 
+优化器 
+AdamW (weight_decay=1e-4) 
+初始学习率 
+2×10⁻⁴ 
+学习率调度 
+CosineAnnealing + Warmup (5 epochs) 
+
+
+===== 第8页 =====
+训练轮数 
+100 (早停patience=15) 
+实际停止轮数 
+95 
+数据增强 
+随机翻转、旋转、颜色抖动、弹性变形 
+损失函数 
+Focal + Dice + Tversky 
+硬件环境 
+NVIDIA RTX 5060 Laptop 8GB 
+训练时长 
+约34 小时 
+ 
+表4：训练超参数配置。CNN 分支和ViT 分支使用ImageNet 预训练权重初始化。 
+训练使用AdamW 优化器[22]，初始学习率为 2 \times 10^{-4}，权重衰减 10^{-4}。学习率
+调度采用余弦退火策略[23]并附加5 个epoch 的线性预热。数据增强包括随机水平翻转
+（p=0.5）、随机旋转（\pm 15°）、亮度对比度调整（\pm 20\%）和弹性变形。训练在NVIDIA 
+RTX 5060 Laptop（8GB 显存）上进行，总计约34 小时，单个epoch 约20 分钟。早停策略
+（patience=15）在第95 个epoch 触发，最佳模型出现在第89 个epoch。 
+对比实验 
+将FBFN 与四种代表性方法在相同数据集划分下进行对比，所有对比方法使用原作者公开
+的预训练模型或按照原文设置重新训练。 
+方法 
+mIoU (%) 
+F1 (%) 
+Precision (%) 
+Recall (%) 
+AUC (%) 
+ManTra-Net 
+55.4 
+61.8 
+63.2 
+60.5 
+72.1 
+SPAN 
+58.7 
+65.2 
+67.8 
+62.8 
+74.8 
+MVSS-Net 
+62.3 
+68.5 
+71.2 
+66.0 
+78.6 
+ObjectFormer 
+64.1 
+70.3 
+72.5 
+68.2 
+80.2 
+FBFN (本文) 
+78.2 
+82.5 
+84.3 
+80.8 
+91.7 
+ 
+表5：对比实验结果。所有方法在相同混合数据集划分下评估，最优值加粗标注。 
+FBFN 在所有评价指标上均优于所选对比方法（表5）。与次优方法ObjectFormer 相比，
+mIoU 提升14.1 个百分点（从64.1%到78.2%），F1-Score 提升12.2 个百分点（从70.3%到
+82.5%），AUC 提升11.5 个百分点（从80.2%到91.7%）。需要注意的是，这一优势幅度可能部
+分来源于实验设置差异（如训练数据分布的差异，详见Discussion 节讨论）。从架构设计角度，
+FBFN 同时覆盖了纹理、上下文、噪声和颜色四个互补维度，而对比方法最多覆盖三个维度
+（MVSS-Net：RGB+噪声+边缘）。 
+
+
+===== 第9页 =====
+ 
+图2：各方法性能对比。FBFN 在mIoU、F1-Score 和AUC 三项核心指标上均大幅领先对比方法。 
+对比结果的进一步分析表明，FBFN 的Precision（84.3%）和Recall（80.8%）同时处于较
+高水平，说明模型在控制误检的同时保持了良好的检出率。ManTra-Net 作为早期端到端方法，
+由于仅依赖单一CNN 特征空间，在面对多样化篡改类型时性能受限（mIoU 仅55.4%）。
+MVSS-Net 通过引入噪声流和边缘流实现了62.3%的mIoU，但其融合策略（简单拼接）未能充
+分利用多源特征的互补性。ObjectFormer 利用Transformer 的全局建模能力取得了64.1%的
+mIoU，但缺乏显式的噪声和颜色分析能力。 
+消融实验 
+为验证各分支的必要性，通过逐分支移除实验分析每个分支对整体性能的贡献。移除某一
+分支时，融合模块自动调整为三通道输入，其余训练配置保持不变。 
+模型变体 
+Precision (%) 
+Recall (%) 
+F1 (%) 
+mIoU (%) 
+完整模型 (FBFN) 
+84.3 
+80.8 
+82.5 
+78.2 
+w/o CNN 分支 
+76.5 
+73.2 
+74.8 
+69.5 
+w/o ViT 分支 
+78.2 
+75.1 
+76.6 
+71.8 
+w/o ELA+SRM 分支 
+79.4 
+76.3 
+77.8 
+73.1 
+w/o 颜色分支 
+80.1 
+77.2 
+78.6 
+74.2 
+ 
+
+
+===== 第10页 =====
+表6：消融实验结果。F1 下降量：CNN(-7.7)>ViT(-5.9)>ELA+SRM(-4.7)>颜色(-3.9)。 
+消融实验结果（表6）显示，移除任何一个分支都会导致明显的性能下降，验证了四个分
+支的互补性和不可或缺性。CNN 分支对整体性能影响最大（F1 下降7.7 个百分点），这表明局
+部纹理与边界信息是篡改定位的基础性特征。ViT 分支的移除导致F1 下降5.9 个百分点，说明
+全局上下文一致性分析对检测大面积篡改和语义级不一致至关重要。ELA+SRM 噪声分支贡献
+4.7 个百分点的F1 提升，颜色分支贡献3.9 个百分点，两者虽然单独贡献相对较小，但它们提
+供了独立于深度学习的物理可解释证据，增强了模型的鲁棒性。 
+ 
+图3：消融实验分析。左图展示移除各分支后F1-Score 的下降幅度，右图展示各分支的相对贡献比例。 
+各分支贡献的梯度分布（CNN > ViT > ELA+SRM > Color）反映了从"强表达能力的可训练
+特征"到"高可解释性的固定特征"的互补关系。可训练分支（CNN 和ViT）凭借端到端优化提
+供主要的判别性能力，而手工特征分支（ELA+SRM 和Color）提供不依赖训练分布的物理先
+验，在面对分布外篡改类型时尤为重要。 
+融合策略消融 
+为验证通道-空间双重注意力融合的优越性，将其与四种替代策略进行对比。 
+融合策略 
+mIoU (%) 
+F1 (%) 
+Precision (%) 
+Recall (%) 
+Concatenation 
+72.4 
+77.1 
+79.3 
+75.0 
+Average 
+70.8 
+75.6 
+77.9 
+73.4 
+Max 
+71.5 
+76.3 
+78.5 
+74.2 
+Channel-Attention 
+75.6 
+80.2 
+82.1 
+78.4 
+Dual-Attention (本文) 
+78.2 
+82.5 
+84.3 
+80.8 
+ 
+
+
+===== 第11页 =====
+表7：融合策略消融对比。Dual-Attention 为通道-空间双重注意力机制。 
+ 
+图4：五种融合策略的mIoU 和F1-Score 对比。注意力机制明显优于静态融合方法。 
+双重注意力融合明显优于所有替代策略（表7）。与简单拼接（Concatenation）相比，
+mIoU 提升5.8 个百分点；与仅使用通道注意力相比，进一步提升2.6 个百分点。平均融合和最
+大值融合为各分支分配相同权重或选择最大响应，无法根据具体篡改场景动态调整分支贡献。
+通道注意力实现了全局层面的自适应权重分配，但空间维度上仍为均匀权重。双重注意力在通
+道和空间两个维度同时实现自适应调整，能够在篡改边界区域增强CNN 分支权重、在大面积
+异常区域增强ViT 分支权重，实现像素级的精细融合控制。 
+损失函数消融 
+组合损失函数中每个组件的贡献通过消融实验验证。 
+损失组合 
+mIoU (%) 
+F1 (%) 
+Focal Only 
+71.3 
+76.8 
+Dice Only 
+73.5 
+78.2 
+Tversky Only 
+72.8 
+77.5 
+Focal + Dice 
+75.9 
+80.4 
+Focal + Tversky 
+76.4 
+80.9 
+
+
+===== 第12页 =====
+Focal + Dice + Tversky (本文) 
+78.2 
+82.5 
+ 
+表8：损失函数消融结果。三种损失的组合取得最佳性能。 
+ 
+图5：损失函数组合消融对比。三损失组合相比单一损失和双损失组合均有明显提升。 
+单一损失中，Dice Loss 表现最优（F1 78.2%），因其直接优化分割质量。Focal Loss 单独
+使用时F1 为76.8%，虽然有效缓解了类别不平衡，但对分割边界质量的优化不足。任意两种
+损失的组合（Focal+Dice: 80.4%, Focal+Tversky: 80.9%）均优于单一损失，三种损失的完整组
+合进一步将F1 提升至82.5%。这一结果证实了三种损失函数在优化目标上的互补性：Focal 
+Loss 聚焦难样本、Dice Loss 优化整体重叠度、Tversky Loss 平衡精确率和召回率。 
+训练过程分析 
+ 
+
+
+===== 第13页 =====
+图6：训练过程中loss、验证集mIoU 和F1-Score 随epoch 的变化曲线。模型在第80 个epoch 后趋于收敛，
+早停在第95 个epoch 触发。 
+模型训练表现出良好的收敛特性（图6）。训练损失从初始的2.71 持续下降至约0.35，验
+证损失从2.53 下降至约0.39，两者保持一致的下降趋势且间距稳定，未出现明显过拟合。验
+证集F1-Score 在前40 个epoch 快速上升（从3.8%到71.7%），第40-80 个epoch 进入稳步提升
+阶段（71.7%到81.8%），第80 个epoch 后趋于平稳。最佳模型出现在第89 个epoch
+（F1=82.5%, mIoU=78.2%），早停机制在连续15 个epoch 未改善后于第95 个epoch 触发，有
+效避免了不必要的计算开销和潜在过拟合风险。 
+计算效率分析 
+方法 
+参数量 (M) 
+GFLOPs 
+FPS 
+推理延迟 (ms) 
+ManTra-Net 
+56.2 
+78.4 
+12.3 
+81.3 
+SPAN 
+44.8 
+52.6 
+18.5 
+54.1 
+MVSS-Net 
+38.5 
+45.3 
+22.1 
+45.2 
+ObjectFormer 
+62.7 
+89.2 
+9.8 
+102.0 
+FBFN (本文) 
+35.8 
+42.1 
+24.6 
+40.7 
+表9：计算效率对比。测试环境为NVIDIA RTX 5060 Laptop 8GB，输入分辨率384×384。 
+ 
+图7：各方法的性能-效率权衡分析。FBFN 以最少的参数量和最快的推理速度取得最高的检测精度。 
+
+
+===== 第14页 =====
+FBFN 在保持最高检测精度的同时，展现了突出的计算效率（表9）。总参数量为35.8M，
+各组件的参数分布如下：CNN 分支（ResNet34 编码器21.3M + UNet++解码器8.0M，通过参数
+共享与通道裁剪优化后共约22.5M）；ViT 分支（Swin-T 编码器采用Tiny 配置约7.4M，
+SegFormer MLP 解码器约2.4M）；颜色分支（MobileNetV3-Small 约2.5M）；融合模块（注意力
+层+输出卷积约1.0M）。ELA+SRM 噪声分支无可训练参数。推理速度达到24.6 FPS（延迟
+40.7ms），满足实时检测的基本需求。这一效率优势主要得益于两个设计选择：Swin-T 的线性
+复杂度自注意力取代了标准Transformer 的二次方复杂度；MobileNetV3-Small 的深度可分离卷
+积将颜色分支的计算开销控制在极低水平。 
+训练总时长约34 小时（95 个epoch），在消费级笔记本GPU（RTX 5060 Laptop, 8GB 显存）
+上即可完成全部训练，无需专业数据中心资源。这证明了FBFN 的设计在学术研究和实际应用
+场景中均具有可行性。 
+定性分析 
+ 
+图8：六组篡改图像的检测定性结果。从左至右依次为：原图、篡改图、真值掩码、CNN 分支预测、ViT 分支
+预测、FBFN 融合预测。融合结果在边界清晰度和完整性上均优于单分支预测。 
+FBFN 在三种典型篡改类型上均实现了高质量的像素级定位（图8）。CNN 分支在篡改边
+界区域提供了精细的轮廓定位，但在大面积平坦篡改区域存在响应不均匀的问题。ViT 分支在
+检测大面积篡改的整体区域上表现突出，但边界分辨率较低。融合结果综合了两者优势，同时
+结合噪声和颜色分支的补充信息，在边界清晰度和区域完整性上均优于单分支预测。 
+
+
+===== 第15页 =====
+ 
+图9：注意力融合模块的特征可视化。热力图显示融合模块根据篡改类型和空间位置动态调整各分支的贡献权
+重。 
+双重注意力机制的自适应权重分配进一步验证了分支互补融合的有效性（图9）。在压缩
+篡改区域，ELA 分支获得较高权重；在颜色不一致区域，颜色分支权重增大；在篡改边界处，
+CNN 分支权重占主导。这种动态的权重分配机制使FBFN 能够根据具体篡改场景灵活调用最
+相关的分支信息。 
+Discussion 
+多分支互补性分析 
+四个分支在不同篡改场景下呈现出明确的互补分工模式。 
+
+
+===== 第16页 =====
+ 
+图10：四个分支的独立预测结果。从左至右分别为CNN 分支、ViT 分支、ELA+SRM 分支和颜色分支的预测热力
+图，展示了各分支对不同篡改维度的敏感性差异。 
+CNN 分支对局部纹理断裂和精细边界具有最高的响应灵敏度，在所有分支中提供了最清
+晰的篡改轮廓。这一优势源于UNet++的密集跳跃连接，使解码器能够充分利用编码器各层级
+的空间细节。消融实验中CNN 分支的最高贡献度（-7.7 F1）也证实了纹理边界信息是篡改定
+位的基础性特征维度。 
+ViT 分支通过Swin Transformer 的滑动窗口自注意力机制，有效捕捉了远距离的全局统计
+不一致性。在大面积拼接篡改和语义替换场景中，ViT 分支能够识别篡改区域与背景在全局统
+计属性（亮度分布、对比度模式）上的系统性偏差，而CNN 的局部感受野难以覆盖这种全局
+尺度的异常。 
+ELA+SRM 噪声分支的独特价值在于其检测能力完全独立于训练数据分布。这些基于信号
+处理的特征直接响应JPEG 压缩历史的物理不一致性和噪声统计特性的局部异常，即使面对训
+练集中未见过的篡改工具或操作方式，只要篡改引入了可检测的压缩或噪声差异，该分支就能
+提供有效的定位线索。 
+颜色分支通过Lab 空间的局部熵分析，检测了与纹理和噪声独立的第四个特征维度。许多
+篡改操作虽然经过精心的边界融合处理，但在色彩分布的微观统计特性上仍然留有痕迹。这些
+痕迹可能通过人眼难以察觉，但局部熵分析能够量化检测这种色彩统计的不一致性。 
+注意力机制的自适应行为 
+融合模块学习到的注意力权重呈现出与篡改类型高度相关的动态分配模式。通过分析验证
+集上各分支的平均注意力权重发现：对于明显的JPEG 压缩不一致区域（常见于简单的复制-粘
+
+
+===== 第17页 =====
+贴操作），ELA 分支平均权重最高；对于精心处理过边界的高质量拼接，CNN 分支在边界像素
+处的权重明显增大；对于涉及色彩调整的语义替换篡改，颜色分支的空间注意力在相关区域呈
+现高响应。 
+ 
+图11：融合叠加效果可视化。原图上叠加篡改定位热力图，展示FBFN 在实际应用场景中的检测效果。 
+这种自适应行为说明注意力机制确实学习到了"在什么情况下信任哪个分支"的策略。相比
+固定权重的融合方式（如简单平均，mIoU 仅70.8%），数据驱动的注意力融合能够针对不同篡
+改特点灵活调用最相关的证据来源，这是双重注意力融合取得7.4 个百分点mIoU 优势的根本
+原因。 
+从方法论角度，FBFN 所体现的"显式特征+隐式特征"融合范式具有潜在的推广价值。在其
+他多模态取证任务（如视频篡改检测、文档伪造识别）中，同样存在可训练深度特征与基于领
+域知识的固定特征并行互补的需求。本文的注意力融合框架为此类异质特征的集成提供了一种
+可参考的架构设计思路。 
+结果的统计考量与对比公平性 
+需要指出的是，本文报告的所有性能数据来自单次训练运行的结果，未提供多次随机种子
+运行的标准差或置信区间，因此无法对性能差异进行严格的统计显著性检验。在对比实验中，
+各对比方法"使用原作者公开的预训练模型或按照原文设置重新训练"意味着对比方法的训练数
+据分布可能与FBFN 不同，这构成了实验设置层面的潜在偏差。14.1 个百分点的mIoU 优势
+（相对于ObjectFormer）需要审慎解读：该优势在多大程度上来源于方法本身的架构创新、在
+多大程度上受益于训练数据（尤其是51.5%的合成数据）带来的分布匹配优势，需要后续研究
+通过更严格的实验设计来厘清。 
+具体而言，更可靠的评估方案应包括：(1) 所有方法在完全相同的训练数据上重新训练；
+(2) 在独立公开测试集上评估；(3) 多次随机种子运行报告均值与标准差。这些是后续版本需要
+补充的关键实验。 
+局限性与典型失败场景 
+通过分析验证集上的失败案例，我们识别出FBFN 性能退化的三种典型场景。其一，经过
+精心后处理（高斯模糊+颜色匹配+JPEG 重压缩）的高质量拼接，当篡改者刻意消除压缩历史
+
+
+===== 第18页 =====
+差异和颜色不一致时，ELA 和颜色分支均失去有效信号，模型主要依赖CNN 和ViT 分支的纹
+理/上下文分析，基于验证集中此类样本的观察，F1-Score 下降幅度在15-20 个百分点范围内
+（估计值，未单独构建测试子集进行系统评估）。其二，极小面积篡改（占比<3%的像素级修
+改），由于全局注意力权重被大面积非篡改区域主导，融合模块对微小篡改区域的响应不足。
+其三，多次压缩后的图像（如社交媒体多次转发），原始的压缩痕迹差异被多次压缩叠加效应
+所掩盖，ELA+SRM 分支的判别力下降。上述失败模式的系统量化评估将在后续工作中通过构
+建专门的难例测试集进行。 
+实验设计的局限性 
+本研究仍存在以下局限性需要指出。其一，验证仅在混合数据集的内部划分上进行，缺乏
+跨数据集的泛化性评估，这是当前实验设计最主要的不足。篡改检测方法在不同数据集之间的
+性能迁移能力是实际应用的关键问题，后续工作需要在COVERAGE、NIST16、IMD2020 等独
+立测试集上验证泛化性能。其二，对比方法的范围仍有局限，缺少与TruFor (CVPR 2023)、
+CAT-Net v2 等最新方法的直接对比。其三，当前实验未包含深度生成模型（如Stable Diffusion、
+DALL-E）产生的高质量AI 篡改图像。随着生成式AI 技术的快速发展，这类篡改可能不遵循
+传统的压缩和噪声假设，ELA+SRM 分支的有效性需要进一步验证。其四，模型在极小篡改区
+域（面积占比 < 5%）上的性能有待系统评估，这类场景下类别不平衡问题更为严重。 
+未来研究将围绕三个方向展开。第一，引入跨数据集域适应机制，通过对抗训练或元学习
+提升模型在不同来源图像上的泛化能力。第二，扩展检测范围至DeepFake 和AIGC 生成图像，
+可能需要设计新的分支来捕捉生成模型特有的频谱指纹。第三，探索模型压缩和知识蒸馏技术，
+进一步降低计算开销以支持边缘设备部署。 
+Conclusion 
+本文提出了四分支注意力融合网络（FBFN），为图像篡改定位问题提供了一种多维互补特
+征融合的新方案。通过在统一框架中同时部署CNN 分支（局部纹理）、Swin Transformer 分支
+（全局上下文）、ELA+SRM 噪声分支（压缩与噪声痕迹）和MobileNetV3 颜色分支（色彩分
+布异常），并以通道-空间双重注意力机制实现自适应融合，FBFN 在混合数据集上取得了mIoU 
+78.2%、F1-Score 82.5%、AUC 91.7%的检测性能，分别超过次优对比方法ObjectFormer 14.1、
+12.2 和11.5 个百分点（该对比结果受限于当前实验条件，详见Discussion 中的统计考量分析）。 
+消融实验系统验证了四个分支的互补性和不可或缺性，融合策略消融证实了双重注意力机
+制相比静态融合方法的明显优势（+5.8 至+7.4 mIoU）。组合损失函数有效平衡了篡改分割中的
+类别不平衡问题。在计算效率方面，FBFN 以35.8M 参数量和24.6 FPS 推理速度实现了精度与
+效率的平衡，可在消费级GPU 上完成训练和部署。 
+
+
+===== 第19页 =====
+这些结果表明，将深度学习的强表达能力与传统信号处理方法的物理可解释性相结合，通
+过注意力机制实现数据驱动的自适应融合，是提升图像篡改检测性能和可靠性的有效路径。 
+Data Availability 
+CASIA v2.0 数据集可从中国科学院自动化研究所公开获取（原始发布地址）。Columbia 数
+据集可从Columbia 大学多媒体与安全实验室网站公开下载。自建合成数据集的生成代码随本
+文代码一同发布。所有训练好的模型权重和完整代码将在论文发表后通过GitHub 开源仓库公
+开。 
+Author Contributions 
+第一作者设计了整体研究方案、实现了模型架构和训练流程、完成了所有实验并撰写论文。
+指导教师参与了研究方向确定、方法讨论和论文审阅。所有作者对论文的最终版本进行了审阅
+和确认。 
+ [1] Farid H. Image forgery detection[J]. IEEE Signal Processing Magazine, 2009, 26(2): 
+16-25. 
+[2] Verdoliva L. Media forensics and deepfakes: An overview[J]. IEEE Journal of 
+Selected Topics in Signal Processing, 2020, 14(5): 910-932. 
+[3] Fridrich J, Soukal D, Lukas J. Detection of copy-move forgery in digital images[C]. 
+Proceedings of Digital Forensic Research Workshop, 2003: 55-63. 
+[4] Fridrich J, Kodovsky J. Rich models for steganalysis of digital images[J]. IEEE 
+Transactions on Information Forensics and Security, 2012, 7(3): 868-882. 
+[5] Lyu S, Farid H. How realistic is photorealistic?[J]. IEEE Transactions on Signal 
+Processing, 2005, 53(2): 845-850. 
+[6] Wu Y, AbdAlmageed W, Natarajan P. ManTra-Net: Manipulation tracing network for 
+detection and localization of image forgeries with anomalous features[C]. Proceedings of 
+the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), 2019: 
+9543-9552. 
+[7] Liu X, Liu Y, Chen J, et al. PSCC-Net: Progressive spatio-channel correlation 
+network for image manipulation detection and localization[J]. IEEE Transactions on 
+Circuits and Systems for Video Technology, 2022, 32(11): 7505-7517. 
+
+
+===== 第20页 =====
+[8] Wang J, Wu Z, Chen J, et al. ObjectFormer for image manipulation detection and 
+localization[C]. Proceedings of the IEEE/CVF Conference on Computer Vision and 
+Pattern Recognition (CVPR), 2022: 2364-2373. 
+[9] Dong C, Chen X, Hu R, et al. MVSS-Net: Multi-view multi-scale supervised 
+networks for image manipulation detection[J]. IEEE Transactions on Pattern Analysis 
+and Machine Intelligence, 2022, 44(11): 7836-7853. 
+[10] Hu X, Zhang Z, Jiang Z, et al. SPAN: Spatial pyramid attention network for image 
+manipulation localization[C]. Proceedings of the European Conference on Computer 
+Vision (ECCV), 2020: 312-328. 
+[11] Krawetz N. A picture's worth: Digital image analysis and forensics[J]. Hacker Factor 
+Solutions, 2007, 6(2): 1-31. 
+[12] Bayar B, Stamm M C. A deep learning approach to universal image manipulation 
+detection using a new convolutional layer[C]. Proceedings of the 4th ACM Workshop on 
+Information Hiding and Multimedia Security (IH&MMSec), 2016: 5-10. 
+[13] Zhou Z, Siddiquee M M R, Tajbakhsh N, et al. UNet++: A nested U-Net architecture 
+for medical image segmentation[C]. Deep Learning in Medical Image Analysis and 
+Multimodal Learning for Clinical Decision Support (DLMIA), 2018: 3-11. 
+[14] He K, Zhang X, Ren S, et al. Deep residual learning for image recognition[C]. 
+Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition 
+(CVPR), 2016: 770-778. 
+[15] Liu Z, Lin Y, Cao Y, et al. Swin Transformer: Hierarchical vision transformer using 
+shifted windows[C]. Proceedings of the IEEE/CVF International Conference on 
+Computer Vision (ICCV), 2021: 10012-10022. 
+[16] Xie E, Wang W, Yu Z, et al. SegFormer: Simple and efficient design for semantic 
+segmentation with transformers[C]. Advances in Neural Information Processing Systems 
+(NeurIPS), 2021, 34: 12077-12090. 
+[17] Howard A, Sandler M, Chen B, et al. Searching for MobileNetV3[C]. Proceedings 
+of the IEEE/CVF International Conference on Computer Vision (ICCV), 2019: 1314-
+1324. 
+
+
+===== 第21页 =====
+[18] Lin T Y, Goyal P, Girshick R, et al. Focal loss for dense object detection[C]. 
+Proceedings of the IEEE International Conference on Computer Vision (ICCV), 2017: 
+2980-2988. 
+[19] Milletari F, Navab N, Ahmadi S A. V-Net: Fully convolutional neural networks for 
+volumetric medical image segmentation[C]. Proceedings of the Fourth International 
+Conference on 3D Vision (3DV), 2016: 565-571. 
+[20] Salehi S S M, Erdogmus D, Gholipour A. Tversky loss function for image 
+segmentation using 3D fully convolutional deep networks[C]. Machine Learning in 
+Medical Imaging (MLMI), 2017: 379-387. 
+[21] Dong J, Wang W, Tan T. CASIA image tampering detection evaluation database[C]. 
+IEEE China Summit and International Conference on Signal and Information Processing 
+(ChinaSIP), 2013: 422-426. 
+[22] Loshchilov I, Hutter F. Decoupled weight decay regularization[C]. Proceedings of 
+the International Conference on Learning Representations (ICLR), 2019. 
+[23] Loshchilov I, Hutter F. SGDR: Stochastic gradient descent with warm restarts[C]. 
+Proceedings of the International Conference on Learning Representations (ICLR), 2017. 

@@ -1,0 +1,18 @@
+# 数据与缓存
+data/
+.cache/
+**/__pycache__/
+*.pyc
+
+# 模型权重与检查点（体积过大，不入库）
+*.pth
+*.pt
+*.pth.tar
+*.ckpt
+*.safetensors
+*.onnx
+
+# 压缩包
+*.zip
+*.tar
+*.tar.gz

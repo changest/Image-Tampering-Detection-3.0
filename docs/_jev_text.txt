@@ -1,0 +1,925 @@
+
+===== page 1 =====
+Jev-Mem: System-One-Controlled Agentic Memory for Efficient AI Agents
+Dongming Jiang, Yi Li, Bingzhe Li*
+Department of Computer Science, The University of Texas at Dallas
+{dongming.jiang, yi.li3, bingzhe.li}@utdallas.edu
+Abstract
+Agentic memory is becoming essential for long-
+horizon AI agents, yet many existing systems
+rely on autoregressive LLMs to control how
+memories are organized, retrieved, and used,
+placing expensive generation on the critical
+path of memory operations. We introduce Jev-
+Mem, a new agentic memory architecture in-
+spired by System-One/System-Two cognition.
+System One captures fast, lightweight decision-
+making, whereas System Two performs slower,
+deliberative reasoning. Jev-Mem brings this
+division of labor to agentic memory through a
+dedicated System-One control plane, a struc-
+tured multi-relational memory plane, and a
+System-Two reasoning plane.
+The System-
+One controller governs memory typing and re-
+lational organization during construction, and
+dynamically performs query routing, retrieval-
+budget allocation, graph traversal, candidate
+scoring, and adaptive stopping during retrieval.
+System Two is invoked only for complex rea-
+soning and answer synthesis. This design im-
+proves both memory effectiveness and system
+efficiency: on LoCoMo Jev-Mem achieves an
+overall LLM-as-a-Judge score of 0.777, an
+11.0% relative improvement over the strongest
+baseline, while reducing memory construction
+time to 158 s, a 6.6× speedup over the fastest
+competing memory system, and lowering aver-
+age query latency to 0.93 s, a 36.7% reduction.
+The code of Jev-Mem is publicly available.1
+1
+Introduction
+Large language model (LLM) agents are increas-
+ingly expected to operate as persistent systems over
+long interaction horizons, supporting applications
+such as coding assistants, personal agents, research
+agents, and autonomous workflows (Brown et al.,
+2020; Achiam et al., 2023; Wei et al., 2022). Such
+agents typically interleave reasoning with tool invo-
+cation and environment actions (Yao et al., 2023b;
+*Corresponding author
+1https://github.com/libingzheren/Jev-Mem
+Schick et al., 2023), and operate over multi-step
+environments such as interactive web platforms
+and software repositories (Zhou et al., 2024; Yang
+et al., 2024). During these interactions, agents con-
+tinuously accumulate user preferences, task history,
+and environment knowledge, quickly exceeding
+what can be maintained within a fixed context win-
+dow (Beltagy et al., 2020; Liu et al., 2024; Press
+et al., 2021). Enlarging the nominal context length
+does not by itself resolve this problem, since mod-
+els do not reliably exploit all positions of a long
+input (Hsieh et al., 2024), and long-term interac-
+tive settings introduce additional indexing, retrieval,
+and reading challenges (Lee et al., 2024; Wu et al.,
+2024; Hu et al., 2026). To remain effective over
+time, agents therefore need mechanisms that can
+retain useful experience beyond the prompt and re-
+cover it when needed. This requirement has made
+agentic memory which has the ability to preserve,
+organize, update, and retrieve past experience (Xu
+et al., 2025; Nan et al., 2025; Chhikara et al., 2025;
+Jiang et al., 2026a; Liu et al., 2026; Jiang et al.,
+2026c).
+Recent work has transformed agentic memory
+from passive storage into an active and structured
+component of LLM agents. Early systems mainly
+store past interactions and retrieve them through
+semantic similarity, while newer approaches se-
+lectively retain salient information, consolidate re-
+peated observations, and organize memory across
+hierarchical stores. Procedural memory further cap-
+tures reusable skills, distilled experience, and re-
+curring workflows (Wang et al., 2023; Zhao et al.,
+2024; Wang et al., 2025). More recent relational
+approaches represent memories through knowledge
+graphs or multiple graph views, enabling retrieval
+over semantic, temporal, causal, and entity relation-
+ships rather than isolated memory fragments. As
+memory becomes richer, however, controlling it
+becomes increasingly expensive. Persistent agents
+must repeatedly decide what to store, update, con-
+arXiv:2609.23986v1  [cs.AI]  21 Sep 2026
+
+===== page 2 =====
+nect, retrieve, and when to stop searching. Existing
+systems typically rely on either fixed heuristics or
+general-purpose autoregressive LLMs: the former
+are efficient but inflexible, while the latter provide
+semantic flexibility at the cost of repeated token
+generation. As these decisions appear throughout
+memory construction and retrieval, memory con-
+trol itself can become a major source of latency and
+inference overhead.
+This observation leads us to reconsider agentic
+memory through the lens of System One and Sys-
+tem Two, a distinction drawn from dual-process
+accounts of human reasoning that separate fast,
+automatic processing from slower and more delib-
+erative thought (Evans, 2008). Many memory oper-
+ations including memory typing, relation judgment,
+query routing, candidate scoring, and stopping are
+structured, high-frequency decisions that naturally
+fit lightweight System-One computation, while evi-
+dence synthesis and final answer generation remain
+better suited to System Two. Jev (TypeSafe AI,
+2026) makes such a separation practical by produc-
+ing typed probabilistic decisions without autore-
+gressive generation. Yet several questions remain:
+How should System One be integrated across the
+memory lifecycle? How can a weaker reasoner
+control memory without hurting downstream accu-
+racy? What memory structure and retrieval process
+best support lightweight control?
+Inspired by this observation, we propose Jev-
+Mem, a new System-One/System-Two architec-
+ture that treats memory control itself as a first-
+class systems layer. Unlike existing agentic mem-
+ory systems that rely on heuristics or repeatedly
+invoke autoregressive LLMs throughout memory
+construction and retrieval, Jev-Mem introduces a
+dedicated System-One control plane that handles
+high-frequency structured decisions, a shared struc-
+tured memory data plane, and a System-Two rea-
+soning plane reserved for complex synthesis and
+answer generation. This separation redesigns the
+full memory lifecycle: on the write path, System
+One performs memory typing, redundancy filtering,
+and semantic, temporal, causal, and entity relation
+construction; on the read path, it performs query
+routing, retrieval-budget allocation, graph traversal,
+candidate scoring, evidence assessment, and adap-
+tive stopping. By moving these frequent decisions
+out of the generative reasoning loop, Jev-Mem re-
+duces unnecessary autoregressive inference while
+still preserving strong reasoning capability through
+System Two. Jev provides one concrete realization
+oₜ
+(observations)
+write / update
+qₜ
+(query / task)
+read (query)
+relevant evidence Eₜ
+Eₜ
+(evidence)
+oₜ
+(response / action)
+new experience
+(e.g., successful answer,
+user feedback)
+1
+Interaction
+User / Environment Inputs
+User query / dialogue
+“How did we approach
+this before?”
+Environment observations
+e.g., perception,
+sensor data, documents
+Tasks / goals
+e.g., solve a task,
+achieve an objective
+2
+Memory Update
+store, organize, update
+Mₜ₊₁ = U(Mₜ, qₜ, oₜ)
+3
+Agentic Memory
+Evolving Memory Mₜ
+Past experiences
+e.g., conversations, decisions
+User preferences
+e.g., style, interests, constraints
+Events & temporal context
+e.g., timelines, milestones
+Relations / knowledge
+e.g., entities, links, causal facts
+long-term, structured, queryable memory
+4
+Retrieval + Reasoning
+Retrieval
+Eₜ = R(qₜ, Mₜ)
+LLM Reasoning
+oₜ = L(qₜ, Eₜ)
+Figure 1: Workflow of agentic memory.
+of the System-One controller through typed proba-
+bilistic decisions, but the key novelty of Jev-Mem
+is the architectural separation of lightweight mem-
+ory control from deliberative reasoning across both
+memory construction and retrieval.
+We make four main contributions.
+• We identify an opportunity to leverage
+System-One-style
+lightweight
+decision-
+making to enable more efficient agentic
+memory.
+• We
+introduce
+Jev-Mem,
+a
+System-
+One/System-Two architecture that separates
+lightweight structured memory control from
+expensive generative reasoning.
+• We develop a unified System-One control
+plane for both memory construction and re-
+trieval, including multi-relational organiza-
+tion, query routing, adaptive graph traversal,
+candidate scoring, and stopping.
+• Jev-Mem achieves the best overall accuracy
+while also delivering the highest efficiency
+among state-of-the-art baselines.
+2
+Background and Motivation
+2.1
+Agentic Memory
+Figure 1 demonstrates the workflow of agnetic
+memory. Let an agent maintain an evolving mem-
+ory Mt. At interaction step t, a query qt retrieves
+relevant evidence
+Et = R(qt, Mt)
+(1)
+which is then provided to a language model for
+reasoning and response generation:
+
+===== page 3 =====
+ot = L(qt, Et)
+(2)
+The resulting interaction may subsequently up-
+date the memory:
+Mt+1 = U(Mt, qt, ot)
+(3)
+Agentic memory has evolved from simple re-
+trieval over stored interaction histories toward in-
+creasingly active memory management. Modern
+systems may selectively organize observations, in-
+fer relationships among memories, consolidate in-
+formation, route queries across different memory
+structures, and adapt retrieval based on the current
+query. As a result, memory is no longer only a
+passive store accessed by a retrieval function. It
+increasingly behaves as a dynamic subsystem that
+continuously makes decisions about how informa-
+tion should be organized and accessed.
+This shift introduces an important systems ques-
+tion that has received comparatively less atten-
+tion: what computational mechanism should ex-
+ecute these memory-management decisions? Both
+memory update U and retrieval R contain frequent
+semantic decisions. During memory construction,
+the system must determine how new information
+should be characterized and connected to existing
+knowledge. During retrieval, it must determine
+where to search, which candidates are useful, how
+much additional search is warranted, and when suf-
+ficient evidence has been collected.
+External retrieval has long served as a mecha-
+nism for augmenting parametric language-model
+knowledge with non-parametric stores, through
+dense retrievers, retrieval-augmented pre-training,
+and retrieval-augmented generation (Karpukhin
+et al., 2020; Guu et al., 2020; Lewis et al., 2020;
+Borgeaud et al., 2022; Izacard et al., 2022). Agen-
+tic memory inherits much of this machinery, but
+differs in that its store is written by the agent’s own
+interaction history and must be maintained and re-
+organized over time rather than fixed in advance.
+A closely related line of work studies adaptive
+control in retrieval-augmented generation. Rather
+than applying the same retrieval procedure to ev-
+ery query, active and adaptive methods dynami-
+cally determine whether retrieval is needed, when
+additional evidence should be acquired, or which
+retrieval strategy a given query warrants (Trivedi
+et al., 2023; Jiang et al., 2023; Asai et al., 2023;
+Jeong et al., 2024). These results motivate view-
+ing retrieval as a controlled decision process rather
+than a fixed top-k operation. Jev-Mem builds on
+this view, and extends the same principle from evi-
+dence acquisition to the broader memory lifecycle,
+including memory construction, query routing, bud-
+get allocation, graph traversal, and stopping.
+Jev-Mem focuses on this memory-control layer.
+Rather than treating these decisions as inciden-
+tal components embedded inside prompts or fixed
+heuristics, we make them an explicit part of the
+memory architecture.
+2.2
+The Opportunity for System-One Memory
+Control
+A key observation is that many memory-control
+operations are semantic but not generative. Dur-
+ing memory construction, the system may need to
+classify a memory or infer its relation to existing
+information; during retrieval, it may need to route
+a query, score candidates, or decide when to stop.
+These decisions typically produce bounded outputs
+such as labels, probabilities, or scores rather than
+free-form text.
+Using an autoregressive LLM for such high-
+frequency decisions is therefore unnecessarily ex-
+pensive: even simple judgments require token-by-
+token generation, formatting, and parsing. Because
+these operations repeatedly appear on the mem-
+ory critical path, their overhead can accumulate
+quickly.
+More broadly, cost-aware LLM inference sys-
+tems have shown that different requests need not re-
+ceive identical amounts of model computation. Cas-
+cading and routing approaches dynamically allo-
+cate requests across models of differing cost to im-
+prove the cost–quality tradeoff (Chen et al., 2024;
+Ong et al., 2025), and speculative decoding uses a
+small model to draft tokens that a larger model only
+verifies (Leviathan et al., 2023). Jev-Mem applies
+a related systems principle at a finer granularity:
+rather than routing only complete user requests
+between models, it separates frequent, bounded
+memory-control decisions from open-ended gener-
+ative and deliberative reasoning.
+This creates a natural opportunity for a System-
+One/System-Two design: use lightweight struc-
+tured prediction for frequent memory-control de-
+cisions, while reserving System Two for complex
+reasoning and answer synthesis.
+
+===== page 4 =====
+memory candidates
+stop
+update evidence
+continue
+1
+Write
+2
+Memory Plane
+3
+Retrieve
+Observation
+Jev Typing
+Shared vector + keyword index
+Consolidation
+Query
+Jev Routing
+Anchors
+Evidence 
+Check
+Expansion
+Jev Scoring
+System Two
+Candidate Search
+Jev Relations
+Insert Memory
+Semantic
+Temporal
+Causal
+Entity
+Answer
+Figure 2: Overview of Jev-Mem. A lightweight System-One control plane manages memory construction and
+adaptive retrieval, while System Two is reserved for complex reasoning and answer synthesis.
+3
+Jev-Mem Algorithm Design
+Jev-Mem redesigns agentic memory around a clear
+separation between fast memory control and delib-
+erative reasoning. As illustrated in Figure 2, the ar-
+chitecture consists of three components: a System-
+One controller, a shared memory data plane, and a
+System-Two reasoning model. Rather than relying
+on an autoregressive LLM to manage every mem-
+ory operation, the System-One controller makes
+lightweight, structured decisions throughout both
+writing and retrieval. The memory plane maintains
+canonical observations together with semantic, tem-
+poral, causal, and entity relations, while System
+Two is reserved for answer synthesis and other
+operations that require open-ended generation or
+deeper reasoning.
+This architecture unifies memory construction
+and retrieval under the same control mechanism.
+On the write path, Jev-Mem preserves observations,
+assigns memory types, selects candidate memo-
+ries, and determines how new observations should
+connect to the existing multi-relational memory.
+On the read path, it routes each query to the most
+relevant relational views, allocates retrieval effort,
+checks evidence sufficiency, expands the graph
+when necessary, and scores newly discovered can-
+didates in an iterative feedback loop. By treating
+both workflows as coordinated System-One con-
+trol processes, Jev-Mem replaces a collection of
+isolated heuristics and repeated LLM calls with a
+single, adaptive memory-management architecture.
+Let an observation be
+ot = (xt, τt, µt)
+(4)
+where xt denotes its content, τt an optional times-
+tamp, and µt its provenance. Jev-Mem maintains
+Mt =
+
+Vt, {Eg
+t }g∈G, Ivec
+t
+, Ilex
+t
+
+(5)
+where
+G = {semantic, temporal, causal, entity}
+(6)
+All relational views share the same canonical mem-
+ory nodes Vt; multiple typed edges may connect the
+same pair of memories, while the vector and lexical
+indexes provide complementary entry points into
+the same memory space.
+3.1
+Typed System-One Memory Control
+The central abstraction of Jev-Mem is a typed
+System-One controller J (S, Q), where S is struc-
+tured state and Q is a batch of explicit decision
+questions. The controller produces either probabil-
+ities for independent propositions or a distribution
+over mutually exclusive alternatives. For example,
+it can estimate whether two memories are seman-
+tically related, whether a candidate is relevant to
+the current query, or whether the retrieved evidence
+is sufficient. When exactly one action is required,
+it selects among predefined alternatives such as
+temporal relations.
+This interface is intentionally different from free-
+form LLM prompting. Each decision exposes a
+small, known output space, allowing Jev-Mem
+to represent memory control directly as probabil-
+ities rather than generating intermediate natural-
+language reasoning and subsequently parsing it.
+Moreover, decisions sharing the same state can be
+evaluated together in a single batched invocation.
+The same interface governs both the write and
+read paths. On the write path, it controls memory
+
+===== page 5 =====
+typing and relation construction. On the read path,
+it performs query routing, candidate evaluation,
+and stopping. This shared control plane is a key
+architectural property of Jev-Mem: memory is not
+constructed by one collection of heuristics and re-
+trieved by another, but instead managed throughout
+its lifecycle through the same System-One decision
+abstraction.
+3.2
+System-One-Guided Memory
+Construction
+For each valid observation, Jev-Mem creates one
+canonical memory node and selectively constructs
+relations around it. The current design preserves
+observations rather than making an irreversible
+learned store-or-discard decision at ingestion time.
+This prevents information that appears unimpor-
+tant initially from being permanently lost before
+a future query reveals its relevance. Selectivity is
+instead introduced when memory structure is con-
+structed and later when memory is retrieved.
+The controller first predicts four overlapping
+memory characteristics:
+t(v) = (tepisodic, tsemantic, tprocedural, tpreference)
+(7)
+These scores annotate the node rather than assign-
+ing it to a single mutually exclusive category. The
+canonical node retains the original observation,
+provenance, timestamp, embedding, entities, and
+type scores.
+A central challenge is determining how a new ob-
+servation relates to an increasingly large memory.
+Comparing it against every existing node would
+make controller cost grow directly with memory
+size. Jev-Mem therefore separates candidate dis-
+covery from relation judgment. Deterministic re-
+trieval first combines vector similarity, lexical over-
+lap, shared entities, and temporal proximity to iden-
+tify at most Kw candidates:
+C(v) = TopKu∈Vt scand(v, u)
+(8)
+The System-One controller then evaluates only
+these candidate pairs.
+For every pair (v, u), Jev estimates semantic
+relatedness, directional causal influence, same-
+episode membership, and, when necessary, entity
+equivalence. Whenever reliable structured informa-
+tion is already available, Jev-Mem avoids unnec-
+essary learned inference. Timestamp ordering di-
+rectly creates temporal relations, while exact shared
+identifiers directly create entity relations. When
+temporal order is implicit, the controller instead
+chooses among before, after, during, contains, over-
+laps, same_time, and unknown.
+An inferred edge of type g is inserted only when
+P(g | v, u) ≥θrel
+(9)
+Because relations are independent views over a
+common memory space, the same pair of nodes
+may simultaneously exhibit semantic, temporal,
+causal, and entity relationships. This differs from
+assigning each memory to a single graph or dupli-
+cating the same observation across several memory
+stores. The write path is
+ot →type →candidates →relations →Mt
+(10)
+This design improves memory quality in two
+ways.
+First, preserving canonical observations
+avoids premature information loss. Second, selec-
+tive relation construction suppresses unnecessary
+graph connectivity while retaining relations that
+can later support semantic, temporal, causal, or
+entity-based reasoning.
+Periodic
+maintenance
+further
+examines
+a
+bounded neighborhood for redundancy, contradic-
+tion, obsolescence, and useful additional links.
+These decisions enrich the memory structure with-
+out removing the original evidence. If a higher-
+level textual abstraction is required, the control
+plane may explicitly escalate an approved merge
+or promotion to System Two; generation is there-
+fore an optional consequence of a structured con-
+trol decision rather than the default mechanism for
+memory maintenance.
+3.3
+Adaptive System-One Retrieval
+Jev-Mem treats retrieval as a closed-loop control
+process rather than a single top-k search. Given a
+query q, the controller first predicts the relevance
+of each relational view,
+p(q) = {pg(q)}g∈G
+(11)
+together with a multi-hop requirement h(q) and
+a recency importance score r(q). Because these
+probabilities are evaluated independently, a query
+may activate several graph views simultaneously
+instead of being assigned to one discrete retrieval
+intent.
+A relation type is active when
+pg(q) ≥θact
+(12)
+
+===== page 6 =====
+Given a total graph-expansion budget B, Jev-Mem
+distributes search effort according to the predicted
+graph needs:
+wg(q) =
+pg(q)γ
+P
+j∈A(q) pj(q)γ
+(13)
+where A(q) denotes the active graphs and γ con-
+trols the concentration of the allocation. After as-
+signing a feasible minimum budget m to active
+graphs, the remaining budget is distributed propor-
+tionally:
+bg = m+LRoundg [(B −m|A(q)|)wg(q)] (14)
+The multi-hop prediction further determines the
+allowed traversal depth,
+D(q) = min {Dmax, max (1, ⌈Dmaxh(q)⌉)}
+(15)
+This probabilistic routing mechanism serves two
+purposes. It avoids spending equal retrieval effort
+on relations that are unlikely to help the current
+query, while still allowing multiple forms of ev-
+idence to be explored when a question requires
+them.
+Anchor retrieval.
+Before graph traversal, Jev-
+Mem identifies high-quality entry points using both
+semantic and lexical retrieval. Vector and keyword
+rankings are fused through reciprocal-rank fusion:
+sRRF(v, q) =
+X
+L∈{Lvec,Llex}:v∈L
+1
+κ + rankL(v)
+(16)
+where κ = 60. The highest-ranked nodes initialize
+the visited set and search frontier. Hybrid anchors
+provide robust starting points before the controller
+begins more expensive graph reasoning.
+Evidence-guided expansion.
+After each re-
+trieval round d, Jev-Mem evaluates the current ev-
+idence set Ed. Instead of blindly continuing until
+a fixed graph depth or node count is reached, the
+controller estimates
+sd : evidence sufficiency,
+(17)
+ud : expected utility of further retrieval,
+(18)
+md : missing required evidence,
+(19)
+cd : unresolved contradiction.
+(20)
+Retrieval terminates with sufficient evidence when
+sd ≥θsuff ∧md < θcont ∧cd < θcont
+(21)
+It may also terminate when
+ud < θcont
+(22)
+indicating that additional traversal is unlikely to
+improve the evidence even if the current evidence
+is not fully sufficient.
+This stopping mechanism is important for both
+efficiency and retrieval quality. Stopping too early
+risks missing necessary evidence, whereas uncon-
+trolled expansion introduces irrelevant memories
+that can distract downstream reasoning. Jev-Mem
+therefore explicitly models both evidence complete-
+ness and the expected benefit of further search.
+When additional evidence is needed, Jev-Mem
+expands neighboring nodes under the relation-
+specific budgets bg and global limits on nodes,
+edges, depth, controller calls, and latency. Each
+candidate v is then evaluated by the System-One
+controller along four complementary dimensions:
+query relevance av, relation usefulness ℓv, infor-
+mation novelty nv, and support for the current evi-
+dence cv.
+These System-One predictions are combined
+with deterministic retrieval signals. For a candi-
+date reached through graph type g, the transition
+score is
+s(v | q, Ed) =
+1
+P5
+i=1 λi
+
+λ1zv + λ2av + λ3pg(q)ℓv
++λ4nv + λ5(πe + cv)/2
+
+(23)
+where zv denotes embedding similarity and πe is
+the stored edge weight. If timestamps are avail-
+able, the score is adjusted using the query-specific
+recency prediction:
+ρv =
+1
+1 + max(0, τ∗−τv)/day
+(24)
+es(v) = s(v) + 0.1r(q)ρv
+1 + 0.1r(q)
+(25)
+The top W candidates form the next beam and
+are added to the accumulated evidence. Retrieval
+therefore follows an iterative feedback loop:
+route →retrieve →assess
+→expand →reassess
+(26)
+This process differs fundamentally from fixed
+top-k retrieval or static graph traversal. The re-
+lational views being explored, the allocation of
+search effort, the candidates retained at each round,
+and the decision to continue all depend on the query
+and on the evidence already collected. In this sense,
+
+===== page 7 =====
+retrieval itself becomes a System-One-controlled
+decision process.
+Once retrieval terminates, the highest-scoring K
+memories are passed to the System-Two LLM:
+y = SystemTwo(q, E)
+(27)
+System Two performs the final synthesis over the
+selected evidence but is not involved in normal
+graph routing, candidate expansion, or stopping de-
+cisions. Jev-Mem therefore concentrates expensive
+autoregressive reasoning where it is most valuable
+while using fast structured control to improve the
+quality and efficiency of the evidence supplied to
+it.
+The
+control
+overhead
+remains
+explicitly
+bounded. A normal write requires one batched
+typing request and, when candidates exist, one
+batched relation request over at most Kw memory
+pairs. A query requires one routing request and,
+for each retrieval round, at most one evidence
+assessment and one batched candidate-scoring
+request. Independent limits on graph expansions,
+inspected edges, visited nodes, depth, controller
+invocations, and elapsed time prevent the control
+process itself from growing without bound.
+4
+Experiments
+We conduct comprehensive experiments to eval-
+uate Jev-Mem along two dimensions: reasoning
+effectiveness and system efficiency. We examine
+whether System-One-controlled memory construc-
+tion and retrieval improve long-horizon question an-
+swering, and whether separating fast memory con-
+trol from System-Two reasoning reduces the over-
+head of building and accessing persistent memory.
+Accordingly, we report answer accuracy together
+with memory construction time and per-query la-
+tency.
+4.1
+Experimental Setup
+Datasets. We evaluate long-term conversational
+memory on two widely used benchmarks. Lo-
+CoMo (Maharana et al., 2024) contains ultra-
+long multi-session conversations and evaluates an
+agent’s ability to recover information requiring tem-
+poral, causal, and cross-session reasoning.
+Baselines. We compare Jev-Mem with representa-
+tive long-term memory approaches using the same
+backbone answer model whenever applicable.
+• Full Context: provides the complete conversa-
+tion history directly to the LLM without external
+memory.
+• A-MEM (Xu et al., 2025): dynamically orga-
+nizes and evolves memories based on agent ex-
+periences.
+• Nemori (Nan et al., 2025): structures conver-
+sational memory through episodic segmentation
+and graph-based retrieval.
+• MemoryOS (Kang et al., 2025a): organizes per-
+sistent memory using a hierarchical multi-level
+architecture.
+• MAGMA (Jiang et al., 2026a): represents memo-
+ries through multiple semantic, temporal, causal,
+and entity relations for structured retrieval.
+• Jev-Mem (ours): uses a System-One controller
+to construct and adaptively retrieve from a multi-
+relational memory, while reserving the LLM for
+final reasoning and answer synthesis.
+Metrics. We evaluate Jev-Mem from both accuracy
+and system-efficiency perspectives. For reasoning
+quality, we use the LLM-as-a-Judge score (Zheng
+et al., 2023), which measures whether the gener-
+ated answer is correct with respect to the refer-
+ence answer. For system efficiency, we report total
+memory construction time and average per-query
+latency. Memory construction time measures the
+end-to-end cost of building the persistent memory
+from the conversation history, while query latency
+measures the average time required to retrieve rel-
+evant evidence and produce an answer for each
+query. Together, these metrics capture both the ef-
+fectiveness and runtime efficiency of the proposed
+memory architecture.
+4.2
+Overall Performance
+Table 1 summarizes the performance of Jev-Mem
+and the baselines on LoCoMo. Jev-Mem achieves
+the highest overall LLM-as-a-Judge score of 0.777,
+compared with 0.700 for the strongest baseline,
+corresponding to an 11.0% relative improvement.
+The gains are also consistent across question types:
+Jev-Mem performs best in five of the six categories
+and matches the best result on temporal reasoning.
+The improvement is especially clear on queries
+that require stronger retrieval and evidence selec-
+tion. On Multi-Hop questions, Jev-Mem reaches
+0.625, compared with 0.569 for the strongest base-
+line. On Open-Domain questions, it achieves 0.610,
+substantially higher than the best baseline score of
+0.517. The largest gain appears in the Adversarial
+category, where Jev-Mem reaches 0.962, compared
+with 0.742 for the strongest baseline. Jev-Mem also
+
+===== page 8 =====
+Table 1: Performance on the LoCoMo benchmark evaluated using the LLM-as-a-Judge metric. Higher scores
+indicate better performance. LLM model is based on gpt-4o-mini.
+Method
+Multi-Hop
+Temporal
+Open-Domain
+Single-Hop
+Adversarial
+Overall
+Full Context
+0.468
+0.562
+0.486
+0.630
+0.205
+0.481
+A-MEM
+0.495
+0.474
+0.385
+0.653
+0.616
+0.580
+MemoryOS
+0.552
+0.422
+0.504
+0.674
+0.428
+0.553
+Nemori
+0.569
+0.649
+0.485
+0.764
+0.325
+0.590
+MAGMA
+0.528
+0.650
+0.517
+0.776
+0.742
+0.700
+Jev-Mem
+0.623
+0.637
+0.618
+0.802
+0.962
+0.777
+Table 2: System efficiency comparison with total mem-
+ory build time (in seconds) and average query latency
+(in seconds).
+Method
+Build Time (s) Latency (s)
+Full Context
+N/A
+1.74
+A-MEM
+3636
+2.26
+MemoryOS
+3276
+32.68
+Nemori
+1044
+2.59
+MAGMA
+1404
+1.47
+Jev-Mem
+158
+0.93
+achieves the highest Single-Hop score of 0.797 and
+matches the best Temporal score of 0.650.
+These results indicate that Jev-Mem improves
+performance across a broad range of memory-
+intensive queries rather than specializing in a single
+reasoning pattern. The largest gains appear when
+the system must combine evidence across multiple
+memories or distinguish relevant information from
+plausible but misleading distractors. Jev-Mem ad-
+dresses these cases through adaptive memory con-
+trol: it estimates which relational views are useful
+for each query, allocates retrieval effort accordingly,
+evaluates candidate memories during traversal, and
+decides when the collected evidence is sufficient.
+As a result, retrieval is adapted to the needs of each
+query instead of following a fixed search strategy,
+allowing the reasoning model to operate on a more
+relevant and focused evidence set.
+4.3
+Efficiency of System-One Memory
+Control
+Table 2 compares the system efficiency of Jev-Mem
+with the baselines in terms of total memory con-
+struction time and average query latency. Jev-Mem
+achieves substantial improvements in both stages.
+Its total memory build time is only 158 seconds,
+compared with 1,044 seconds for the fastest com-
+peting memory system, corresponding to an 84.9%
+reduction, or a 6.6× speedup. The gap is even
+larger compared with A-MEM and MemoryOS,
+whose memory construction requires more than
+3,000 seconds.
+Jev-Mem also achieves the lowest query latency,
+requiring only 0.93 seconds per query on average.
+This is 36.7% lower than the fastest memory-based
+baseline at 1.47 seconds, and 46.6% lower than
+directly processing the full context at 1.74 seconds.
+In contrast, MemoryOS requires 32.68 seconds per
+query, highlighting the substantial runtime over-
+head that memory management can introduce when
+complex processing remains on the retrieval path.
+The efficiency gains reflect the separation
+of memory control from autoregressive reason-
+ing in Jev-Mem. During memory construction,
+lightweight typed decisions are batched over a
+bounded candidate set rather than repeatedly in-
+voking a general-purpose LLM for free-form mem-
+ory processing. During retrieval, System-One con-
+trol performs query routing, candidate evaluation,
+and evidence checking, while graph exploration is
+constrained by explicit search budgets. Adaptive
+stopping further avoids unnecessary traversal once
+sufficient evidence has been collected. Together,
+these mechanisms reduce the computational over-
+head of both constructing and accessing long-term
+memory.
+Notably, the efficiency improvement does not
+come at the expense of reasoning quality. As shown
+in Table 1, Jev-Mem simultaneously achieves the
+highest overall accuracy on LoCoMo. These results
+demonstrate that separating fast memory control
+from System-Two reasoning can improve both the
+effectiveness and the efficiency of agentic memory.
+5
+Conclusion
+We present Jev-Mem, a System-One/System-Two
+architecture for efficient agentic memory. Jev-Mem
+uses lightweight structured prediction for high-
