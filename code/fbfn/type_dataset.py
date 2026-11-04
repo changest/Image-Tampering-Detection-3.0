@@ -82,6 +82,11 @@ class TypeManifestDataset(Dataset):
         else:
             ela = compute_ela(rgb)
             ent = compute_entropy(rgb)
+            # 缓存里的熵图是 256 输入下的 31×31；未缓存图像按当前尺寸算出的是 55×55，
+            # 必须归一到同一分辨率，否则同一 batch 内无法 collate。
+            if ent.shape[-1] != 31:
+                ent = np.stack([cv2.resize(ent[c], (31, 31), interpolation=cv2.INTER_LINEAR)
+                                for c in range(ent.shape[0])])
 
         # 分割掩码
         if has_mask:
