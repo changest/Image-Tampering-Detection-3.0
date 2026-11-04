@@ -161,6 +161,45 @@ The System-One branches account for under 1% of the parameters and about 3 ms pe
 
 The results show that System One alone (noise + color evidence) reaches only 91.22% AUC in-distribution and is generally weaker across generators (36–69% AUC). Recovering roughly 99% AUC requires escalating about 63% of the samples, for a mean latency of about 20 ms—a modest speedup obtained at a clear cost in accuracy. This yields a conclusion consistent with, but more direct than, the ablation in Section 4.4: System-One evidence, though cheap, is not strong enough to support high-accuracy screening on its own; its value lies in fusing with System-Two evidence to provide cross-generator robustness, rather than in acting as a standalone fast channel. Unless a stronger System-One head is trained (for example by adding a lightweight semantic encoder), the cascade therefore offers limited benefit on FBFN, and we leave it as future work.
 
+### 4.6 Extension: tampering-type classification and pixel-level localization (v3.0)
+
+To serve forensic anti-fraud use cases, we extended the same fusion framework to a multi-task setting. (i) The ViT branch is replaced by DINOv2 ViT-L/14 at 448×448 (a multiple of 14); since interpolating 1024 channels at this resolution overflows memory, features are first reduced to 128 channels with a 1×1 convolution and then bilinearly upsampled. (ii) After the four evidence maps, a shared 128-dimensional convolutional trunk feeds two heads: a 4-class tampering-type head and a dedicated binary (real/fake) head. (iii) Segmentation (BCE+Dice), image-level authenticity, and type classification are optimized jointly.
+
+**Data.** Training pools CASIA v1/v2 (real, splice, copy-move), TIGAS generated images, and synthetic copy-move/splice samples: 25,469 images in total (9,633 real, 5,813 splice, 7,023 copy-move, 3,000 AI-generated; 19,439 with pixel masks). Evaluation uses only the real CASIA validation set (2,866 images: 1,658 real, 466 splice, 742 copy-move), with no TIGAS or synthetic data.
+
+**Training.** AdamW (lr 1e-4), cosine schedule, EMA (0.999), mixed precision, and DDP on 2×A40. The total loss is
+
+`L = 1.0·L_seg + 0.5·L_bin + 0.5·L_type`,
+
+where `L_seg = BCE + Dice` and `L_type` is class-frequency-weighted cross-entropy. Table 6 reports the results on the real CASIA validation set.
+
+**Table 6.** Results on the real CASIA validation set.
+
+| Checkpoint | Binary AUC | Type macro-F1 | Segmentation mIoU |
+|---|---|---|---|
+| ep5 | 0.9230 | 0.7179 | 0.3323 |
+| ep10 | 0.9555 | 0.8019 | 0.4830 |
+| ep14 (EMA) | 0.9672 | 0.8251 | — |
+| ep20 (EMA) | **0.9634** | **0.8492** | 0.5614 |
+| ep30 | 0.9587 | 0.8394 | **0.5836** |
+| ep40 (EMA) | 0.9473 | 0.8412 | 0.5807 |
+
+Joint training raises type macro-F1 from 0.718 to 0.849 and segmentation mIoU from 0.332 to 0.584; classification and localization benefit each other. Compared with the smaller 256×256 backbone (Swin-T/ResNet-34: type F1 0.818, mIoU 0.490, AUC 0.977), the larger backbone improves type classification and localization but has a slightly lower binary AUC (0.963 vs. 0.977), indicating that its gains come from fine-grained type discrimination and pixel localization rather than image-level binary detection. Further training to 40 epochs degrades classification (AUC 0.9634→0.9473), showing overfitting to the mixed training distribution.
+
+**Threshold and temperature calibration.** At the default 0.5 threshold the model is conservative. Searching the threshold on the validation set, the ep30 checkpoint at threshold 0.18 improves accuracy from 88.14% to 89.95% and binary F1 from 85.20% to 88.47%; temperature scaling (T≈1.88) reduces the expected calibration error (ECE) from 0.081 to 0.059. Table 7 summarizes three representative checkpoints.
+
+**Table 7.** Binary threshold and temperature calibration on real CASIA.
+
+| Checkpoint | AUC | Acc / F1 @0.5 | Best thr | Acc / F1 calibrated | T | ECE (before→after) |
+|---|---|---|---|---|---|---|
+| ep20 (EMA) | 0.9634 | 88.17% / 85.34% | 0.08 | 89.64% / 88.27% | 1.60 | 0.066→0.047 |
+| ep30 | 0.9587 | 88.14% / 85.20% | 0.18 | 89.95% / 88.47% | 1.88 | 0.081→0.059 |
+| ep40 (EMA) | 0.9473 | 87.89% / 84.97% | 0.10 | 89.64% / 88.37% | 2.01 | 0.092→0.055 |
+
+We also tested logit ensembling of ep20(EMA) and ep30: it improves AUC by only ~0.001 and type F1 by ~0.3 points at twice the inference cost, so the deployed system does not ensemble. The final configuration uses ep30 (threshold 0.18, T 1.88) for binary detection and segmentation, and ep20(EMA) for type classification.
+
+**Limitations.** Copy-move recall is about 74.8% and these images are often classified as real; splice images perform best (recall ≈86%). The optimal threshold is fitted on CASIA and must be recalibrated for other domains, and the validation set covers CASIA only, so cross-dataset generalization remains to be evaluated.
+
 ---
 
 ## 5. Discussion
@@ -175,7 +214,7 @@ Two limitations warrant emphasis. First, the method is weak on GAN-generated ima
 
 ## 6. Conclusion
 
-We presented FBFN, a four-branch attention fusion network for AI-generated image detection whose branches correspond to four physically interpretable evidence streams. Under the GenImage protocol, FBFN generalizes near-losslessly across the Stable Diffusion family, and its noise branch is shown by ablation to be specifically responsible for cross-generator robustness. Joint training recovers most of the diffusion-family gap, while GAN images remain an open failure mode. The principal contribution is not a new state of the art in cross-generator accuracy — a stronger black-box detector exists — but a detector that keeps its evidence interpretable while remaining competitive on the Stable Diffusion family. This interpretability is intended to support auditable detection in settings where a scalar score is insufficient.
+We presented FBFN, a four-branch attention fusion network for AI-generated image detection whose branches correspond to four physically interpretable evidence streams. Under the GenImage protocol, FBFN generalizes near-losslessly across the Stable Diffusion family, and its noise branch is shown by ablation to be specifically responsible for cross-generator robustness. Joint training recovers most of the diffusion-family gap, while GAN images remain an open failure mode. The v3.0 extension further generalizes the framework to multi-task tampering analysis: on the real-only CASIA validation set it reaches a tampering-type macro-F1 of 0.849 and a pixel-localization mIoU of 0.584, providing both type discrimination and regional evidence for forensic anti-fraud use. The principal contribution is not a new state of the art in cross-generator accuracy — a stronger black-box detector exists — but a detector that keeps its evidence interpretable while remaining competitive on the Stable Diffusion family. This interpretability is intended to support auditable detection in settings where a scalar score is insufficient.
 
 ---
 
@@ -189,4 +228,4 @@ The authors declare no conflict of interest.
 
 ## Data availability statement
 
-The GenImage benchmark used in this study is publicly available via the TIGAS mirror at https://huggingface.co/datasets/H1merka/TIGAS_dataset. The trained models and evaluation code are available from the corresponding author upon reasonable request.
+The GenImage benchmark used in this study is publicly available via the TIGAS mirror at https://huggingface.co/datasets/H1merka/TIGAS_dataset. The v3.0 training and evaluation code is open-sourced at https://github.com/changest/Image-Tampering-Detection-3.0. Model weights are available from the corresponding author upon reasonable request.
