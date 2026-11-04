@@ -19,3 +19,6 @@ data/
 
 # 第三方方法源码（各自独立仓库）
 code/experiments/methods/*/
+
+# 生成的渲染预览
+presentation/output/rendered/
