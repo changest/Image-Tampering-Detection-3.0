@@ -101,7 +101,7 @@ def main():
     model.load_state_dict(torch.load(args.ckpt, map_location=dev, weights_only=True))
     model.eval()
 
-    ys, zs, yt, pt = [], [], [], []
+    ys, zs, yt, pt, zt = [], [], [], [], []
     tp = fp = fn = 0.0
     with torch.no_grad():
         for x, ent, ela, y, t, mask, hm in loader:
@@ -109,6 +109,7 @@ def main():
             mask, hm = mask.to(dev), hm.to(dev)
             out = model(x, ela=ela, entropy=ent)
             zs.append(out["final"].float().cpu().numpy())
+            zt.append(out["type"].float().cpu().numpy())
             pt.append(out["type"].argmax(1).cpu().numpy())
             ys.append(y.numpy()); yt.append(t.numpy())
             pm = (torch.sigmoid(out["final_map"]) > 0.5).float()
@@ -121,6 +122,7 @@ def main():
 
     ys = np.concatenate(ys).astype(int)
     zs = np.concatenate(zs)
+    zt = np.concatenate(zt)
     yt = np.concatenate(yt); pt = np.concatenate(pt)
 
     probs = 1 / (1 + np.exp(-zs))
@@ -150,7 +152,7 @@ def main():
     print(f"分割 mIoU={tp / (tp + fp + fn + 1e-7):.4f} F1={2 * tp / (2 * tp + fp + fn + 1e-7):.4f}")
 
     if args.out:
-        np.savez(args.out, z=zs, y=ys, type_true=yt, type_pred=pt)
+        np.savez(args.out, z=zs, zt=zt, y=ys, type_true=yt, type_pred=pt)
         print(f"saved logits to {args.out}")
 
 
