@@ -1,0 +1,41 @@
+===== ep20_ema =====
+checkpoint: fbfn/runs_type/ep20_ema.pth
+samples=2866 real=1658 fake=1208
+AUC = 0.9634  (阈值/温度不改变 AUC)
+[原始概率] ECE=0.0660  thr=0.50 acc=0.8817 F1=0.8534
+[最优阈值] thr=0.08 acc=0.8964 F1=0.8827
+[温度缩放] T=1.597  ECE=0.0469
+[温度+阈值] thr=0.19 acc=0.8964 F1=0.8826
+类型准确率=0.8643 macro-F1=0.6375
+分割 mIoU=0.5614 F1=0.7191
+===== ep20_raw =====
+checkpoint: fbfn/runs_type/ep20_raw.pth
+samples=2866 real=1658 fake=1208
+AUC = 0.9600  (阈值/温度不改变 AUC)
+[原始概率] ECE=0.0809  thr=0.50 acc=0.8779 F1=0.8478
+[最优阈值] thr=0.05 acc=0.8950 F1=0.8798
+[温度缩放] T=1.823  ECE=0.0680
+[温度+阈值] thr=0.14 acc=0.8960 F1=0.8822
+类型准确率=0.8590 macro-F1=0.8418
+分割 mIoU=0.5741 F1=0.7294
+===== ep30_raw =====
+checkpoint: fbfn/runs_type/ep30_raw.pth
+samples=2866 real=1658 fake=1208
+AUC = 0.9587  (阈值/温度不改变 AUC)
+[原始概率] ECE=0.0813  thr=0.50 acc=0.8814 F1=0.8520
+[最优阈值] thr=0.05 acc=0.8992 F1=0.8847
+[温度缩放] T=1.880  ECE=0.0589
+[温度+阈值] thr=0.18 acc=0.8995 F1=0.8847
+类型准确率=0.8601 macro-F1=0.8394
+分割 mIoU=0.5836 F1=0.7371
+===== ep40_ema =====
+checkpoint: fbfn/runs_type/ep40_ema.pth
+samples=2866 real=1658 fake=1208
+AUC = 0.9473  (阈值/温度不改变 AUC)
+[原始概率] ECE=0.0922  thr=0.50 acc=0.8789 F1=0.8497
+[最优阈值] thr=0.05 acc=0.8925 F1=0.8744
+[温度缩放] T=2.006  ECE=0.0550
+[温度+阈值] thr=0.10 acc=0.8964 F1=0.8837
+类型准确率=0.8583 macro-F1=0.8412
+分割 mIoU=0.5807 F1=0.7347
+CALIB_DONE
