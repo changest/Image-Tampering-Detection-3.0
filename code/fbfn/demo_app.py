@@ -118,10 +118,10 @@ def build(ckpt, img_size, thr, temp):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--ckpt", default=os.path.join(HERE, "runs_type", "ep30_raw.pth"))
+    ap.add_argument("--ckpt", default=os.path.join(HERE, "runs_type", "last_ema.pth"))
     ap.add_argument("--img_size", type=int, default=448)
-    ap.add_argument("--thr", type=float, default=0.18)
-    ap.add_argument("--temp", type=float, default=1.88)
+    ap.add_argument("--thr", type=float, default=0.42)
+    ap.add_argument("--temp", type=float, default=1.849)
     ap.add_argument("--port", type=int, default=7860)
     ap.add_argument("--inbrowser", action="store_true")
     args = ap.parse_args()
