@@ -22,3 +22,6 @@ code/experiments/methods/*/
 
 # 生成的渲染预览
 presentation/output/rendered/
+
+# 网页 PPT 渲染预览
+presentation_web/rendered/
