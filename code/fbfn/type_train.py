@@ -23,7 +23,7 @@ from torch.utils.data import DataLoader, Subset
 from torch.utils.data.distributed import DistributedSampler
 from sklearn.metrics import roc_auc_score, f1_score, confusion_matrix
 
-from .type_dataset import TypeManifestDataset
+from .type_dataset import TypeManifestDataset, RandPerturbDataset
 from .type_model import FBFNType
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -148,6 +148,8 @@ def main():
     ap.add_argument("--label_smooth", type=float, default=0.05)
     ap.add_argument("--type_boost", default="",
                     help="类型类别权重倍率，如 2:1.5,1:1.2（类别:倍率，逗号分隔）")
+    ap.add_argument("--aug_perturb", type=float, default=0.0,
+                    help="训练时施加 JPEG/缩放/模糊扰动的概率（0=关闭，推荐 0.5）")
     ap.add_argument("--grad_clip", type=float, default=1.0)
     ap.add_argument("--resume", default="", help="从指定 raw 权重续训")
     ap.add_argument("--resume_ema", default="", help="配套 EMA 权重（可选）")
@@ -175,8 +177,23 @@ def main():
     if args.limit:
         tr = _subset_by_class(tr, args.limit)
         va = _subset_by_class(va, args.limit)
+
+    base = tr.dataset if isinstance(tr, Subset) else tr
+    types = [r[2] for r in base.rows]
+    cnt = Counter(types)
+    w = torch.tensor([len(types) / (4 * cnt.get(k, 1)) for k in range(4)],
+                     dtype=torch.float32, device=device)
+    if args.type_boost:
+        for kv in args.type_boost.split(","):
+            k, v = kv.split(":")
+            w[int(k)] *= float(v)
     if rank == 0:
-        print(f"train {len(tr)} / val {len(va)}", flush=True)
+        print("type counts", dict(cnt), "weights", [round(v, 2) for v in w.tolist()], flush=True)
+
+    if args.aug_perturb > 0:
+        tr = RandPerturbDataset(tr, p=args.aug_perturb, img_size=args.img_size)
+    if rank == 0:
+        print(f"train {len(tr)} / val {len(va)} aug_perturb={args.aug_perturb}", flush=True)
 
     if distributed:
         tr_sampler = DistributedSampler(tr, num_replicas=world, rank=rank, shuffle=True)
@@ -191,18 +208,6 @@ def main():
     va_eval = _stratified_subset(va, args.eval_limit) if args.eval_limit else va
     vl = DataLoader(va_eval, batch_size=args.eval_batch, shuffle=False,
                     num_workers=args.num_workers, pin_memory=True)
-
-    base = tr.dataset if isinstance(tr, Subset) else tr
-    types = [r[2] for r in base.rows]
-    cnt = Counter(types)
-    w = torch.tensor([len(types) / (4 * cnt.get(k, 1)) for k in range(4)],
-                     dtype=torch.float32, device=device)
-    if args.type_boost:
-        for kv in args.type_boost.split(","):
-            k, v = kv.split(":")
-            w[int(k)] *= float(v)
-    if rank == 0:
-        print("type counts", dict(cnt), "weights", [round(v, 2) for v in w.tolist()], flush=True)
 
     if args.model == "large":
         from .type_model_large import FBFNTypeLarge

@@ -114,3 +114,55 @@ class TypeManifestDataset(Dataset):
         mask = torch.from_numpy(np.ascontiguousarray(mask))
         return (x, ent, ela, torch.tensor(float(label)),
                 torch.tensor(typ, dtype=torch.long), mask, torch.tensor(float(has_mask)))
+
+
+class RandPerturbDataset(Dataset):
+    """随机施加 JPEG / 缩放 / 模糊扰动，并重算 ELA 与熵图。
+
+    用于鲁棒性微调：模型训练时见到压缩、缩放后的样本，
+    避免只在高质量原图上有效。
+    """
+
+    def __init__(self, base, p=0.5, img_size=448):
+        self.base = base
+        self.p = p
+        self.img_size = img_size
+
+    def __len__(self):
+        return len(self.base)
+
+    def _perturb(self, img):
+        h, w = img.shape[:2]
+        r = random.random()
+        bgr = img[:, :, ::-1]
+        if r < 0.55:
+            q = random.randint(50, 95)
+            ok, buf = cv2.imencode(".jpg", bgr, [cv2.IMWRITE_JPEG_QUALITY, q])
+            img = cv2.imdecode(buf, cv2.IMREAD_COLOR)[:, :, ::-1]
+        elif r < 0.85:
+            s = random.uniform(0.5, 1.0)
+            small = cv2.resize(bgr, (max(8, int(w * s)), max(8, int(h * s))),
+                               interpolation=cv2.INTER_AREA)
+            img = cv2.resize(small, (w, h), interpolation=cv2.INTER_LINEAR)[:, :, ::-1]
+        else:
+            k = random.choice([3, 5])
+            img = cv2.GaussianBlur(bgr, (k, k), 0)[:, :, ::-1]
+        return img
+
+    def __getitem__(self, idx):
+        x, ent, ela, y, t, mask, hm = self.base[idx]
+        if random.random() >= self.p:
+            return x, ent, ela, y, t, mask, hm
+        img = (x.permute(1, 2, 0).numpy() * 255.0).clip(0, 255).astype(np.uint8)
+        img = self._perturb(img)
+        rgb = img.astype(np.float32) / 255.0
+        rgb = rgb.transpose(2, 0, 1)
+        ela = compute_ela(rgb)
+        ent = compute_entropy(rgb)
+        if ent.shape[-1] != 31:
+            ent = np.stack([cv2.resize(ent[c], (31, 31), interpolation=cv2.INTER_LINEAR)
+                            for c in range(ent.shape[0])])
+        x = torch.from_numpy(np.ascontiguousarray(rgb)).float()
+        ela = torch.from_numpy(np.ascontiguousarray(ela))
+        ent = torch.from_numpy(np.ascontiguousarray(ent))
+        return x, ent, ela, y, t, mask, hm
