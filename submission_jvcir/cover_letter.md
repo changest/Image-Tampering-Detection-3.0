@@ -14,7 +14,8 @@ We would be grateful for your consideration and look forward to the reviewers' c
 
 Sincerely,
 
-Jie Lu (卢杰), Xiaobo Li (李晓波), Chuntong Jiang (姜春彤), Fulan Wang (汪福兰)
+Jie Lu (卢杰), Xiaobo Li (李晓波), Chuntong Jiang (姜春彤), Fulan Wang (汪福兰), Mingqian Li (李明倩)
 Taiyuan University of Technology, Taiyuan, Shanxi, China
 Corresponding author: Jie Lu, lujie123456bhjcyx@qq.com
 Chuntong Jiang: 2796959858@qq.com
+Mingqian Li: limingqian@tyust.edu.cn, tel. 15135151901
