@@ -1,5 +1,12 @@
 # Interpretable Four-Branch Attention Fusion Network for Image Tampering Detection, Type Classification, and Localization
 
+**Jie Lu (卢杰)**
+
+Taiyuan University of Technology, Taiyuan, Shanxi, China
+
+Corresponding author: Jie Lu, lujie123456bhjcyx@qq.com
+
+
 ---
 
 ## Abstract
@@ -272,11 +279,15 @@ We presented FBFN, a four-branch attention fusion network for AI-generated image
 
 ## Acknowledgements
 
-This work was supported by *[funding source and grant number — to be completed by the author]*.
+This work was supported by [funding source and grant number — to be completed by the author].
 
-## Conflict of interest
+## CRediT authorship contribution statement
 
-The authors declare no conflict of interest.
+Jie Lu: Conceptualization, Methodology, Software, Validation, Formal analysis, Investigation, Data curation, Writing – original draft, Writing – review & editing, Visualization.
+
+## Declaration of competing interest
+
+The author declares that he has no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
 
 ## Data availability statement
 
@@ -284,4 +295,23 @@ The GenImage benchmark used in this study is publicly available via the TIGAS mi
 
 [15] Guillaro, F., Cozzolino, D., Sud, A., Dufour, N., Verdoliva, L.: "TruFor: Leveraging all-round clues for trustworthy image forgery detection and localization" Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit., 2023, pp. 20606–20615.
 
+[16] Wen, B., Zhu, Y., Subramanian, R., Ng, T.-T., Shen, X., Winkler, S.: "COVERAGE — A novel database for copy-move forgery detection" Proc. IEEE Int. Conf. Image Process., 2016, pp. 161–165.
+
+## References
+
+[1] Zhu, M., Chen, H., Yan, Q., et al.: "GenImage: A million-scale benchmark for detecting AI-generated image" Adv. Neural Inf. Process. Syst., 2023, 36.
+[2] Wang, S.-Y., Wang, O., Zhang, R., Owens, A., Efros, A.A.: "CNN-generated images are surprisingly easy to spot... for now" Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit., 2020, pp. 8695–8704.
+[3] Krawetz, N.: "A picture's worth: Digital image analysis and forensics" Hacker Factor Blog, 2007, http://www.hackerfactor.com/blog/, accessed August 2026.
+[4] Fridrich, J., Kodovský, J.: "Rich models for steganalysis of digital images" IEEE Trans. Inf. Forensics Secur., 2012, 7, (3), pp. 868–882.
+[5] Wang, H., Cheng, R., Zhang, Y., Han, C., Gui, J.: "LOTA: Bit-planes guided AI-generated image detection" Proc. IEEE/CVF Int. Conf. Comput. Vis., 2025.
+[6] Radford, A., Kim, J.W., Hallacy, C., et al.: "Learning transferable visual models from natural language supervision" Proc. Int. Conf. Mach. Learn., 2021, 139, pp. 8748–8763.
+[7] Ojha, U., Li, Y., Lee, Y.J.: "Towards universal fake image detectors that generalize across generative models" Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit., 2023, pp. 24480–24489.
+[8] He, K., Zhang, X., Ren, S., Sun, J.: "Deep residual learning for image recognition" Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit., 2016, pp. 770–778.
+[9] Liu, Z., Lin, Y., Cao, Y., et al.: "Swin transformer: Hierarchical vision transformer using shifted windows" Proc. IEEE/CVF Int. Conf. Comput. Vis., 2021, pp. 10012–10022.
+[10] Xie, E., Wang, W., Yu, Z., Anandkumar, A., Alvarez, J.M., Luo, P.: "SegFormer: Simple and efficient design for semantic segmentation with transformers" Adv. Neural Inf. Process. Syst., 2021, 34, pp. 12077–12090.
+[11] Zhou, Z., Rahman Siddiquee, M.M., Tajbakhsh, N., Liang, J.: "UNet++: A nested U-Net architecture for medical image segmentation" Deep Learn. Med. Image Anal. Multimodal Learn. Clin. Decis. Support, 2018, pp. 3–11.
+[12] H1merka: "TIGAS dataset" Hugging Face, https://huggingface.co/datasets/H1merka/TIGAS_dataset, accessed August 2026.
+[13] Kahneman, D.: "Thinking, fast and slow" Farrar, Straus and Giroux, 2011.
+[14] Weston, J., Sukhbaatar, S.: "System 2 attention (is something you might need too)" arXiv preprint arXiv:2311.11829, 2023.
+[15] Guillaro, F., Cozzolino, D., Sud, A., Dufour, N., Verdoliva, L.: "TruFor: Leveraging all-round clues for trustworthy image forgery detection and localization" Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit., 2023, pp. 20606–20615.
 [16] Wen, B., Zhu, Y., Subramanian, R., Ng, T.-T., Shen, X., Winkler, S.: "COVERAGE — A novel database for copy-move forgery detection" Proc. IEEE Int. Conf. Image Process., 2016, pp. 161–165.

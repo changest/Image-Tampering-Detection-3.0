@@ -3,17 +3,17 @@
 ## 文件
 - [ ] `manuscript_jvcir.md` → 转成 Elsevier Word/PDF（需补作者信息、单位、邮箱）
 - [ ] `highlights.txt`（5 条，每条 ≤85 字符）
-- [ ] `cover_letter.md`（补通讯作者信息）
+- [x] `cover_letter.md`（补通讯作者信息）
 - [ ] 图 1–2（architecture / evidence）单独高清文件（≥300 dpi，TIFF/EPS）
 - [ ] 表 1–10 可编辑
 - [ ] 参考文献 [1]–[16] 核对格式
 
 ## 内容
-- [ ] 标题页：作者、单位、通讯作者、ORCID（如有）
+- [x] 标题页：作者、单位、通讯作者、ORCID（如有）
 - [ ] 摘要 ≤250 词（当前约 300 词，需压缩）
 - [ ] 关键词 5–6 个
-- [ ] Declaration of competing interest
-- [ ] CRediT author statement
+- [x] Declaration of competing interest
+- [x] CRediT author statement
 - [ ] Data availability statement（代码/权重链接 + 数据可索取）
 - [ ] 伦理声明（公开数据集，无需伦理审批）
 
