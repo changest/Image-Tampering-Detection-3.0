@@ -200,6 +200,34 @@ We also tested logit ensembling of ep20(EMA) and ep30: it improves AUC by only ~
 
 **Limitations.** Copy-move recall is about 74.8% and these images are often classified as real; splice images perform best (recall ≈86%). The optimal threshold is fitted on CASIA and must be recalibrated for other domains, and the validation set covers CASIA only, so cross-dataset generalization remains to be evaluated.
 
+### 4.7 Deployment and inference acceleration
+
+To assess engineering usability, we benchmarked mixed-precision inference on two GPUs: an NVIDIA A40 server and an RTX 5060 Laptop. Table 8 reports single-image forward latency (batch=1, mean of 30 runs after warm-up, 448×448 input).
+
+**Table 8.** Single-image inference latency (ms, model forward only, excluding ELA/entropy preprocessing).
+
+| Precision | A40 | RTX 5060 | Speed-up vs. fp32 (A40 / 5060) |
+|---|---|---|---|
+| fp32 | 78.8 | 191.0 | 1.00× / 1.00× |
+| bf16 | 34.3 | 80.9 | 2.30× / 2.36× |
+| fp16 | 31.9 | 74.6 | 2.47× / 2.56× |
+| bf16 + channels_last | 31.1 | 78.6 | 2.53× / 2.43× |
+| bf16, batch=8 (per image) | 21.7 | — | 3.63× |
+
+On the A40, end-to-end single-image latency (including ELA/entropy computation and heat-map rendering) drops from 128 ms in fp32 to 81 ms in bf16. In batch mode, bf16 with batch=8 amortizes to 21.7 ms per image, about 3.6× faster than the fp32 single-image latency.
+
+For accuracy, Table 9 compares the three precisions on the full real CASIA validation set (2,866 images). The differences in AUC, type accuracy, macro-F1, and segmentation mIoU between bf16/fp16 and fp32 are all at most 0.0005 and can be regarded as lossless.
+
+**Table 9.** Accuracy of mixed-precision inference (last_ema, real CASIA).
+
+| Precision | AUC | Type accuracy | Type macro-F1 | Segmentation mIoU |
+|---|---|---|---|---|
+| fp32 | 0.9502 | 0.8552 | 0.8410 | 0.5844 |
+| bf16 | 0.9507 | 0.8555 | 0.8414 | 0.5840 |
+| fp16 | 0.9503 | 0.8555 | 0.8413 | 0.5845 |
+
+We therefore set bf16 as the default inference precision and deployed the detector as a LAN HTTP service on the A40 server: a browser uploads an image and receives the authenticity probability, type distribution, and heat map; model plus preprocessing take about 81 ms per request. Note that `torch.compile` could not be used because the model contains custom branch operators; further latency reduction via ONNX Runtime or TensorRT operator fusion and INT8 quantization is left for future work.
+
 ---
 
 ## 5. Discussion

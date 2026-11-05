@@ -41,3 +41,14 @@
 日志文件：`train_large5c.log`（20 轮主训练）、`eval_snapshots_c.log`（ep20 评测）、`train_hard.log` / `eval_hard.log`（困难样本微调）、`calib.log`（阈值/温度校准）。
 
 权重不进入 Git 历史，通过 GitHub Releases 附件提供。
+
+## 部署与推理加速（2026-11-05）
+
+| 精度 | A40 单图 | RTX 5060 单图 | CASIA AUC / F1 / mIoU |
+|---|---|---|---|
+| fp32 | 78.8 ms | 191.0 ms | 0.9502 / 0.8410 / 0.5844 |
+| bf16 | 34.3 ms | 80.9 ms | 0.9507 / 0.8414 / 0.5840 |
+| fp16 | 31.9 ms | 74.6 ms | 0.9503 / 0.8413 / 0.5845 |
+
+A40 端到端单图 81 ms（含 ELA/熵与热图）；bf16 batch=8 摊销 21.7 ms/图。
+服务器 Demo：`http://172.19.71.5:7860`（bf16，last_ema）。
