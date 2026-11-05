@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """在纯真实 CASIA 验证集上评测（排除合成数据与 TIGAS）。"""
 import argparse
+import contextlib
 import os
 
 import numpy as np
@@ -23,7 +24,9 @@ def main():
     ap.add_argument("--num_workers", type=int, default=8)
     ap.add_argument("--model", choices=["small", "large"], default="small")
     ap.add_argument("--img_size", type=int, default=256)
+    ap.add_argument("--amp", choices=["fp32", "bf16", "fp16"], default="fp32")
     args = ap.parse_args()
+    amp_dtype = {"fp32": None, "bf16": torch.bfloat16, "fp16": torch.float16}[args.amp]
 
     dev = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     ds = TypeManifestDataset(
@@ -46,15 +49,16 @@ def main():
 
     ys, ps, yt, pt = [], [], [], []
     tp = fp = fn = 0.0
-    with torch.no_grad():
+    amp = torch.autocast("cuda", dtype=amp_dtype) if amp_dtype is not None else contextlib.nullcontext()
+    with torch.no_grad(), amp:
         for x, ent, ela, y, t, mask, hm in loader:
             x, ent, ela = x.to(dev), ent.to(dev), ela.to(dev)
             mask, hm = mask.to(dev), hm.to(dev)
             out = model(x, ela=ela, entropy=ent)
-            ps.append(torch.sigmoid(out["final"]).cpu().numpy())
+            ps.append(torch.sigmoid(out["final"].float()).cpu().numpy())
             pt.append(out["type"].argmax(1).cpu().numpy())
             ys.append(y.numpy()); yt.append(t.numpy())
-            pm = (torch.sigmoid(out["final_map"]) > 0.5).float()
+            pm = (torch.sigmoid(out["final_map"].float()) > 0.5).float()
             sel = hm.bool()
             if sel.any():
                 p_, m_ = pm[sel], mask[sel]
