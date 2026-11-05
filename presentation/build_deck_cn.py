@@ -364,15 +364,19 @@ def build():
     text(s, Inches(0.75), Inches(5.15), Inches(11.8), Inches(0.7),
          "负结果：案例记忆、分支路由、分辨率路由均未超过这条简单级联；\n"
          "路由要成立需多尺度重训，收益主要是省算力。", size=12, color=MUTED, spacing=1.35)
+    text(s, Inches(0.75), Inches(6.3), Inches(11.8), Inches(0.4),
+         "部署：bf16 推理在 A40 上模型 34 ms、端到端 81 ms（fp32 128 ms）；完整 CASIA 精度差异 ≤0.0005。",
+         size=12, color=ACCENT)
     footer(s, n, "延迟口径：RTX 5060 Laptop，系统一 3 ms / 全模型 30 ms")
     notes(s, "效率部分借鉴了“快思考 + 慢思考”的思路，但工程上最简单的形式就是快慢级联："
              "先用 ELA、熵、颜色统计训练一个线性分类器，3 毫秒出结果，"
              "不确定才升级全模型。19 毫秒可以拿到 0.896 AUC。"
-             "我们也试过案例记忆和分辨率路由，都没有超过这条曲线，这是可以公开的负结果。")
+             "我们也试过案例记忆和分辨率路由，都没有超过这条曲线，这是可以公开的负结果。"
+             "部署时用 bf16 推理：A40 上模型 34 毫秒、端到端 81 毫秒，完整验证集精度差异不超过 0.0005。")
 
     # 11 Demo
     s = slide(prs); n += 1
-    header(s, "上传即得判定、类型与热图", "本地 RTX 5060 实时推理，无需服务器")
+    header(s, "上传即得判定、类型与热图", "本地 RTX 5060 或 A40 服务器（bf16，端到端 81 ms）")
     pic(s, os.path.join(FIG, "demo_screenshot.png"), Inches(0.6), Inches(1.55),
         height=Inches(5.25))
     bullets(s, Inches(8.05), Inches(1.8), Inches(4.7), Inches(4.5), [
