@@ -36,6 +36,7 @@
 - 续训到 40 轮：30 轮后分类指标过拟合下降
 - 复制移动类别加权：效果有限
 - 困难 copy-move 微调（ep21–ep25）：召回 74.8%→79.6%，但精确率与整体 F1/mIoU 下降，判定边界平移而非判别力提升
+- Lovász 分割微调（ep31–ep33）：基础 mIoU 仅 +0.004，TTA 后 +0.003，未替换 ep30
 - 双模型 logits 集成：AUC +0.001、F1 +0.3 点，推理翻倍，不划算
 
 日志文件：`train_large5c.log`（20 轮主训练）、`eval_snapshots_c.log`（ep20 评测）、`train_hard.log` / `eval_hard.log`（困难样本微调）、`calib.log`（阈值/温度校准）。

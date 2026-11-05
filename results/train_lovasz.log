@@ -1,0 +1,98 @@
+W1105 13:53:50.841000 139894582133952 torch/distributed/run.py:779] 
+W1105 13:53:50.841000 139894582133952 torch/distributed/run.py:779] *****************************************
+W1105 13:53:50.841000 139894582133952 torch/distributed/run.py:779] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W1105 13:53:50.841000 139894582133952 torch/distributed/run.py:779] *****************************************
+distributed=True world=2 device=cuda:0
+type counts {0: 9633, 2: 7023, 1: 5813, 3: 3000} weights [0.66, 1.1, 0.91, 2.12]
+train 25469 / val 5066 aug_perturb=0.0
+/pfm/disks/core/lxbo/work/fbfn_project/code/fbfn/type_train.py:251: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler(enabled=(device.type == "cuda"))
+/pfm/disks/core/lxbo/work/fbfn_project/code/fbfn/type_train.py:251: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler(enabled=(device.type == "cuda"))
+resumed raw from fbfn/runs_type/ep30_raw.pth
+/pfm/disks/core/lxbo/work/fbfn_project/code/fbfn/type_train.py:283: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast(enabled=(device.type == "cuda")):
+/pfm/disks/core/lxbo/work/fbfn_project/code/fbfn/type_train.py:283: FutureWarning: `torch.cuda.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cuda', args...)` instead.
+  with torch.cuda.amp.autocast(enabled=(device.type == "cuda")):
+/pfm/disks/core/lxbo/miniconda3/envs/fbfn/lib/python3.10/site-packages/torch/utils/checkpoint.py:1399: FutureWarning: `torch.cpu.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cpu', args...)` instead.
+  with device_autocast_ctx, torch.cpu.amp.autocast(**cpu_autocast_kwargs), recompute_context:  # type: ignore[attr-defined]
+/pfm/disks/core/lxbo/miniconda3/envs/fbfn/lib/python3.10/site-packages/torch/utils/checkpoint.py:1399: FutureWarning: `torch.cpu.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cpu', args...)` instead.
+  with device_autocast_ctx, torch.cpu.amp.autocast(**cpu_autocast_kwargs), recompute_context:  # type: ignore[attr-defined]
+/pfm/disks/core/lxbo/miniconda3/envs/fbfn/lib/python3.10/site-packages/torch/autograd/graph.py:769: UserWarning: Grad strides do not match bucket view strides. This may indicate grad was not created according to the gradient layout contract, or that the param's strides changed since DDP was constructed.  This is not an error, but may impair performance.
+grad.sizes() = [1, 128, 1, 1], strides() = [128, 1, 128, 128]
+bucket_view.sizes() = [1, 128, 1, 1], strides() = [128, 1, 1, 1] (Triggered internally at ../torch/csrc/distributed/c10d/reducer.cpp:327.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+/pfm/disks/core/lxbo/miniconda3/envs/fbfn/lib/python3.10/site-packages/torch/autograd/graph.py:769: UserWarning: Grad strides do not match bucket view strides. This may indicate grad was not created according to the gradient layout contract, or that the param's strides changed since DDP was constructed.  This is not an error, but may impair performance.
+grad.sizes() = [1, 128, 1, 1], strides() = [128, 1, 128, 128]
+bucket_view.sizes() = [1, 128, 1, 1], strides() = [128, 1, 1, 1] (Triggered internally at ../torch/csrc/distributed/c10d/reducer.cpp:327.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+  ep31 it50/1062 loss=0.8178 lr=2.19e-05
+  ep31 it100/1062 loss=0.9303 lr=2.19e-05
+  ep31 it150/1062 loss=0.9561 lr=2.19e-05
+  ep31 it200/1062 loss=0.9618 lr=2.19e-05
+  ep31 it250/1062 loss=0.9557 lr=2.19e-05
+  ep31 it300/1062 loss=0.9587 lr=2.19e-05
+  ep31 it350/1062 loss=0.9478 lr=2.19e-05
+  ep31 it400/1062 loss=0.9495 lr=2.19e-05
+  ep31 it450/1062 loss=0.9463 lr=2.19e-05
+  ep31 it500/1062 loss=0.9376 lr=2.19e-05
+  ep31 it550/1062 loss=0.9439 lr=2.19e-05
+  ep31 it600/1062 loss=0.9428 lr=2.19e-05
+  ep31 it650/1062 loss=0.9364 lr=2.19e-05
+  ep31 it700/1062 loss=0.9376 lr=2.19e-05
+  ep31 it750/1062 loss=0.9410 lr=2.19e-05
+  ep31 it800/1062 loss=0.9377 lr=2.19e-05
+  ep31 it850/1062 loss=0.9366 lr=2.19e-05
+  ep31 it900/1062 loss=0.9335 lr=2.19e-05
+  ep31 it950/1062 loss=0.9363 lr=2.19e-05
+  ep31 it1000/1062 loss=0.9391 lr=2.19e-05
+  ep31 it1050/1062 loss=0.9421 lr=2.19e-05
+  snapshot ep31 saved
+[ep31] loss=0.9431 (no eval)
+  ep32 it50/1062 loss=0.9185 lr=5.48e-06
+  ep32 it100/1062 loss=0.8854 lr=5.48e-06
+  ep32 it150/1062 loss=0.8807 lr=5.48e-06
+  ep32 it200/1062 loss=0.8756 lr=5.48e-06
+  ep32 it250/1062 loss=0.8934 lr=5.48e-06
+  ep32 it300/1062 loss=0.8956 lr=5.48e-06
+  ep32 it350/1062 loss=0.9023 lr=5.48e-06
+  ep32 it400/1062 loss=0.9207 lr=5.48e-06
+  ep32 it450/1062 loss=0.9249 lr=5.48e-06
+  ep32 it500/1062 loss=0.9171 lr=5.48e-06
+  ep32 it550/1062 loss=0.9227 lr=5.48e-06
+  ep32 it600/1062 loss=0.9169 lr=5.48e-06
+  ep32 it650/1062 loss=0.9106 lr=5.48e-06
+  ep32 it700/1062 loss=0.9079 lr=5.48e-06
+  ep32 it750/1062 loss=0.9061 lr=5.48e-06
+  ep32 it800/1062 loss=0.9030 lr=5.48e-06
+  ep32 it850/1062 loss=0.8988 lr=5.48e-06
+  ep32 it900/1062 loss=0.9007 lr=5.48e-06
+  ep32 it950/1062 loss=0.8971 lr=5.48e-06
+  ep32 it1000/1062 loss=0.8968 lr=5.48e-06
+  ep32 it1050/1062 loss=0.8934 lr=5.48e-06
+  snapshot ep32 saved
+[ep32] loss=0.8923 (no eval)
+  ep33 it50/1062 loss=0.9507 lr=0.00e+00
+  ep33 it100/1062 loss=0.8859 lr=0.00e+00
+  ep33 it150/1062 loss=0.8951 lr=0.00e+00
+  ep33 it200/1062 loss=0.9158 lr=0.00e+00
+  ep33 it250/1062 loss=0.9127 lr=0.00e+00
+  ep33 it300/1062 loss=0.9271 lr=0.00e+00
+  ep33 it350/1062 loss=0.9254 lr=0.00e+00
+  ep33 it400/1062 loss=0.9100 lr=0.00e+00
+  ep33 it450/1062 loss=0.9007 lr=0.00e+00
+  ep33 it500/1062 loss=0.8980 lr=0.00e+00
+  ep33 it550/1062 loss=0.8931 lr=0.00e+00
+  ep33 it600/1062 loss=0.8958 lr=0.00e+00
+  ep33 it650/1062 loss=0.8957 lr=0.00e+00
+  ep33 it700/1062 loss=0.8942 lr=0.00e+00
+  ep33 it750/1062 loss=0.8967 lr=0.00e+00
+  ep33 it800/1062 loss=0.8917 lr=0.00e+00
+  ep33 it850/1062 loss=0.8904 lr=0.00e+00
+  ep33 it900/1062 loss=0.8901 lr=0.00e+00
+  ep33 it950/1062 loss=0.8887 lr=0.00e+00
+  ep33 it1000/1062 loss=0.8889 lr=0.00e+00
+  ep33 it1050/1062 loss=0.8889 lr=0.00e+00
+  snapshot ep33 saved
+[ep33] loss=0.8909 (no eval)
+done, best macroF1 -1

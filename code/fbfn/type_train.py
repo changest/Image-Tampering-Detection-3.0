@@ -88,6 +88,32 @@ def dice_loss(logits, target, eps=1e-6):
     return 1 - num / den
 
 
+def _lovasz_grad(gt_sorted):
+    p = len(gt_sorted)
+    gts = gt_sorted.sum()
+    intersection = gts - gt_sorted.float().cumsum(0)
+    union = gts + (1 - gt_sorted).float().cumsum(0)
+    jaccard = 1. - intersection / union
+    if p > 1:
+        jaccard[1:] = jaccard[1:] - jaccard[:-1]
+    return jaccard
+
+
+def lovasz_hinge(logits, labels):
+    """逐图像 Lovász hinge（二分类），logits/labels: (B,1,H,W)。"""
+    losses = []
+    for lg, lb in zip(logits, labels):
+        lg = lg.reshape(-1).float()
+        lb = lb.reshape(-1).float()
+        signs = 2. * lb - 1.
+        errors = 1. - lg * signs
+        errors_sorted, perm = torch.sort(errors, descending=True)
+        gt_sorted = lb[perm]
+        grad = _lovasz_grad(gt_sorted)
+        losses.append(torch.dot(F.elu(errors_sorted) + 1, grad))
+    return torch.stack(losses).mean()
+
+
 def evaluate(model, loader, device):
     model.eval()
     ys, ps, yt, pt = [], [], [], []
@@ -140,6 +166,8 @@ def main():
     ap.add_argument("--lr", type=float, default=1e-4)
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--w_seg", type=float, default=1.0)
+    ap.add_argument("--w_lovasz", type=float, default=0.0,
+                    help="Lovász hinge 损失权重（直接优化 IoU）")
     ap.add_argument("--w_bin", type=float, default=0.5)
     ap.add_argument("--w_type", type=float, default=0.5)
     ap.add_argument("--w_att", type=float, default=0.1)
@@ -266,6 +294,9 @@ def main():
                     # 保证 final_map 分支在每步都参与计算图，避免 DDP 未用参数报错
                     seg = out["final_map"].sum() * 0.0
                 loss = loss + args.w_seg * seg
+                if args.w_lovasz > 0 and sel.any():
+                    loss = loss + args.w_lovasz * lovasz_hinge(
+                        out["final_map"][sel], mask[sel])
             loss = loss / args.accum
             scaler.scale(loss).backward()
             run += loss.item() * args.accum
