@@ -4,7 +4,7 @@ import os
 import re
 
 from docx import Document
-from docx.shared import Pt
+from docx.shared import Pt, Inches
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -44,6 +44,20 @@ def main():
             doc.add_heading(line[3:], level=1); i += 1; continue
         if line.startswith("### "):
             doc.add_heading(line[4:], level=2); i += 1; continue
+        mimg = re.match(r"!\[(.*?)\]\((.*?)\)", line)
+        if mimg:
+            caption, path = mimg.group(1), mimg.group(2)
+            full = os.path.join(HERE, path)
+            if os.path.exists(full):
+                doc.add_picture(full, width=Inches(6.3))
+                doc.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.CENTER
+            cp = doc.add_paragraph()
+            cp.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            rr = cp.add_run(caption)
+            rr.italic = True
+            rr.font.size = Pt(8.5)
+            i += 1
+            continue
         if line.startswith("|"):
             block = []
             while i < len(lines) and lines[i].startswith("|"):

@@ -55,6 +55,8 @@ FBFN's design is motivated by the "dual-process" view of human visual forensics:
 FBFN maps this division onto the evidence level. The four branches are chosen to cover complementary and physically interpretable sources of evidence, each producing a pixel-level evidence map of the same spatial size, followed by a dual attention fusion module and global average pooling:
 
 1. **CNN branch** (System Two) — an encoder–decoder network with a ResNet-34 [8] encoder (UNet++ [11]), capturing multi-scale semantic appearance.
+
+![Fig. 1. Architecture of FBFN v3.0.](figures/fig1_architecture_v3.png)
 2. **ViT branch** (System Two) — a Swin Transformer [9] (Tiny) with a SegFormer [10] MLP decoder, capturing long-range and global semantic structure.
 3. **Noise branch** (System One) — Error Level Analysis (JPEG quality 90) concatenated with three 5×5 zero-sum SRM high-pass filters, capturing compression and residual noise artifacts.
 4. **Color branch** (System One) — Lab color-space features plus local entropy computed over sliding windows, followed by a shallow CNN, capturing color-statistics anomalies.
@@ -64,6 +66,8 @@ The System-One branches model low-level residual signals directly and are comput
 ### 3.3 Evidence branches
 
 Continuing the dual-process division above, the System-One branches model low-level residual signals directly while the System-Two branches model RGB semantic content; all four map the input to a single-channel evidence map. The CNN and ViT branches operate directly on the RGB input and yield semantic evidence. The noise branch receives the ELA and SRM-filtered responses as auxiliary inputs and aggregates them into noise evidence. The color branch receives the entropy map as an auxiliary input and aggregates color-space and entropy evidence. The use of explicit, named evidence streams — rather than a single fused representation — is what makes the model's decisions inspectable: each evidence map can be visualized to show *where* and *which* artifact the network relies on.
+
+![Fig. 2. Branch evidence maps for a real and a tampered image.](figures/fig2_evidence_maps.png)
 
 ### 3.4 Dual attention fusion
 
@@ -192,7 +196,15 @@ where `L_seg = BCE + Dice` and `L_type` is class-frequency-weighted cross-entrop
 | ep30 | 0.9587 | 0.8394 | **0.5836** |
 | ep40 (EMA) | 0.9473 | 0.8412 | 0.5807 |
 
-Joint training raises type macro-F1 from 0.718 to 0.849 and segmentation mIoU from 0.332 to 0.584; classification and localization benefit each other. Compared with the smaller 256×256 backbone (Swin-T/ResNet-34: type F1 0.818, mIoU 0.490, AUC 0.977), the larger backbone improves type classification and localization but has a slightly lower binary AUC (0.963 vs. 0.977), indicating that its gains come from fine-grained type discrimination and pixel localization rather than image-level binary detection. Further training to 40 epochs degrades classification (AUC 0.9634→0.9473), showing overfitting to the mixed training distribution.
+Joint training raises type macro-F1 from 0.718 to 0.849 and segmentation mIoU from 0.332 to 0.584; classification and localization benefit each other.
+
+![Fig. 3. Training dynamics of type macro-F1 and segmentation mIoU across checkpoints.](figures/fig3_train.png)
+
+Type macro-F1 and segmentation mIoU increase together during training (Fig. 3); the classification metric peaks around epoch 20 and then slightly declines, indicating overfitting to the mixed training distribution. Compared with the smaller 256×256 backbone (Swin-T/ResNet-34: type F1 0.818, mIoU 0.490, AUC 0.977), the larger backbone improves type classification and localization but has a slightly lower binary AUC (0.963 vs. 0.977), indicating that its gains come from fine-grained type discrimination and pixel localization rather than image-level binary detection. Further training to 40 epochs degrades classification (AUC 0.9634→0.9473), showing overfitting to the mixed training distribution.
+
+**Robustness.** To mimic social-media redistribution, we evaluate the model after JPEG compression, resizing, and blur. Training with random JPEG/resize/blur augmentation leaves clean metrics essentially unchanged while raising the JPEG q90 AUC from 0.850 to 0.888 and improving the blurred-image type F1 by 34.9 points (Fig. 4). Across all six perturbations the augmented model is equal or better.
+
+![Fig. 4. Binary AUC under six perturbations before and after robustness-oriented augmentation.](figures/fig4_robust.png)
 
 **Threshold and temperature calibration.** At the default 0.5 threshold the model is conservative. Searching the threshold on the validation set, the ep30 checkpoint at threshold 0.18 improves accuracy from 88.14% to 89.95% and binary F1 from 85.20% to 88.47%; temperature scaling (T≈1.88) reduces the expected calibration error (ECE) from 0.081 to 0.059. Table 7 summarizes three representative checkpoints.
 
@@ -213,6 +225,10 @@ We also tested logit ensembling of ep20(EMA) and ep30: it improves AUC by only ~
 **Same-protocol baseline comparison.** To eliminate evaluation-protocol differences, we ran the official TruFor [15] weights on exactly the same CASIA validation set (2,866 images), resizing inputs to 512. TruFor achieves an image-level AUC of 0.9463, accuracy 88.76%, and F1 85.75%; its segmentation mIoU is 0.5854 at threshold 0.5 and 0.6653 at the best threshold (0.75). Our method reaches AUC 0.9686, accuracy 89.36%, F1 87.05%, and mIoU 0.6029 (TTA). Our method is therefore stronger at image-level detection, while TruFor is stronger at pixel-level localization. Note that TruFor's training set includes CASIA, and ours is also trained on CASIA, so the comparison may still be affected by training-data overlap; cross-dataset evaluation is left for future work.
 
 **Dedicated binary head with a frozen backbone.** We further freeze all backbone parameters and train a lightweight MLP on nine features per image (original binary logit, max/top-1% mean/mean/std of the fused map, and four type logits) using 11,469 CASIA training images and testing on 2,866 validation images. For ep20_ema, AUC rises from 0.9634 to 0.9686, accuracy from 88.17% to 89.36%, and binary F1 from 85.34% to 87.05%; the linear head reaches 0.9668/89.46%/87.31%. For the robust last_ema, AUC rises from 0.9503 to 0.9572. The head occupies 41 KB and runs on CPU, adding no GPU cost.
+
+**Qualitative results.** Fig. 5 shows representative splice and copy-move examples. Splice regions are localized accurately, whereas the copy-move prediction is close to but offset from the ground truth, consistent with the 74.8% copy-move recall.
+
+![Fig. 5. Qualitative localization results for splice (top two rows) and copy-move (bottom row): input, ground truth, prediction heat map, and overlay.](figures/fig5_qualitative.png)
 
 **Limitations.** Copy-move recall is about 74.8% and these images are often classified as real; splice images perform best (recall ≈86%). The optimal threshold and the dedicated binary head are fitted on CASIA and must be recalibrated for other domains. A cross-dataset test on COVERAGE (100 original/forged pairs of similar-object copy-move) shows a substantial drop: zero-shot AUC is 0.5797 and the best mIoU is 0.062 for the robust model, and even after fine-tuning on 40 pairs the AUC remains around 0.55 (mIoU 0.15). Under the same protocol, TruFor reaches AUC 0.767 and mIoU 0.455, indicating that its multi-source training gives better out-of-domain behavior. The current system should therefore be regarded as specialized to CASIA-style and compressed social-media images; closing the cross-dataset gap requires large-scale training with similar-object copy-move data or a dedicated copy-move contrastive objective.
 
