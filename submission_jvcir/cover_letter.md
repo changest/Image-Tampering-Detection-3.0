@@ -16,6 +16,6 @@ Sincerely,
 
 Jie Lu (卢杰), Xiaobo Li (李晓波), Chuntong Jiang (姜春彤), Mingqian Li (李明倩), Fulan Wang (汪福兰)
 Taiyuan University of Technology, Taiyuan, Shanxi, China
-Corresponding author: Xiaobo Li, [email to be completed]
+Corresponding author: Xiaobo Li, lixiaobo@tyust.edu.cn, tel. 13834565350
 Chuntong Jiang: 2796959858@qq.com
 Mingqian Li: limingqian@tyust.edu.cn, tel. 15135151901
