@@ -285,7 +285,7 @@ def build():
 
     # 7 主结果
     s = slide(prs); n += 1
-    header(s, "类型 F1 达 0.849，定位 mIoU 达 0.584")
+    header(s, "类型 F1 达 0.849，定位 mIoU 达 0.603")
     table(s, Inches(0.75), Inches(1.65), Inches(11.8),
           ["检查点", "真伪 AUC", "类型 macro-F1", "分割 mIoU"],
           [["ep5", "0.9230", "0.7179", "0.3323"],
@@ -296,14 +296,17 @@ def build():
            ["last_ema（稳健版）", "0.9502", "0.8410", "0.5844"]],
           col_ratios=[2.6, 1.9, 1.9, 1.9], font=15, row_h=Inches(0.52))
     text(s, L, Inches(5.55), Inches(12.0), Inches(0.4),
-         "相比起点 ep5：类型 F1 +13.1 点，定位 mIoU +25.2 点。", size=15,
+         "相比起点 ep5：类型 F1 +13.1 点，定位 mIoU +27.1 点（TTA）。", size=15,
          color=ACCENT, bold=True)
     text(s, L, Inches(6.05), Inches(12.0), Inches(0.4),
-         "与 256px 小骨干相比：F1 0.818 → 0.849，mIoU 0.490 → 0.584；二分类 AUC 略低。",
+         "256px 小骨干：F1 0.818 → 0.849，mIoU 0.490 → 0.603；AUC 0.977 → 0.969。",
          size=12.5, color=MUTED)
+    text(s, L, Inches(6.45), Inches(12.0), Inches(0.4),
+         "最终配置：ep20_ema + 专用二分类头 → AUC 0.969；ep30_raw + TTA(θ=0.40) → mIoU 0.603。",
+         size=12, color=ACCENT)
     footer(s, n, "数据来源：纯真实 CASIA 验证集 2,866 张，本项目实测")
     notes(s, "主结果看三列：AUC、类型 F1、mIoU。随着训练推进，类型和定位持续提升，"
-             "到 ep20 类型 F1 到 0.849，ep30 定位 mIoU 到 0.584。"
+             "到 ep20 类型 F1 到 0.849，ep30+TTA 定位 mIoU 到 0.603。"
              "需要诚实说明：二分类 AUC 0.96，略低于原来的 256px 小骨干 0.977，"
              "但类型和定位都全面超过。这与大骨干的收益集中在细粒度判别一致。")
 
@@ -313,7 +316,7 @@ def build():
     pic(s, os.path.join(FIG, "chart_train.png"), Inches(0.7), Inches(1.75), width=Inches(8.2))
     bullets(s, Inches(9.25), Inches(1.85), Inches(3.5), Inches(4.2), [
         "类型 F1 从 0.718 升到 0.849",
-        "mIoU 从 0.332 升到 0.584",
+        "mIoU 从 0.332 升到 0.603（TTA）",
         "30 轮后分类开始过拟合",
     ], size=14)
     text(s, Inches(9.25), Inches(5.2), Inches(3.4), Inches(0.8),
@@ -400,14 +403,14 @@ def build():
     pic(s, os.path.join(FIG, "demo_screenshot.png"), Inches(0.6), Inches(1.55),
         height=Inches(5.25))
     bullets(s, Inches(8.05), Inches(1.8), Inches(4.7), Inches(4.5), [
-        "篡改概率 96.1%，阈值 0.42",
-        "类型：拼接 96.8%",
+        "篡改概率 99.9%，专用头阈值 0.5",
+        "类型：拼接 96.9%",
         "热图框出被替换的花朵区域",
         "四分支证据图同步展示",
-        "阈值与温度在 CASIA 上校准",
+        "专用头与阈值在 CASIA 上校准",
     ], size=14.5)
     footer(s, n, "Demo：fbfn.demo_app（Gradio），权重 last_ema.pth")
-    notes(s, "这是实际运行的界面，不是示意图。上传一张拼接图，右侧立刻给出 96.1% 的篡改概率、"
+    notes(s, "这是实际运行的界面，不是示意图。上传一张拼接图，右侧立刻给出 99.9% 的篡改概率、"
              "类型是拼接、以及热图；热图准确框住了被替换的花朵。下面四张图是各分支的证据图，"
              "答辩时可以现场演示，也可以指出哪一支在支撑判断。")
 
@@ -436,7 +439,7 @@ def build():
     header(s, "可解释、可部署、可持续迭代")
     bullets(s, L, Inches(1.75), Inches(7.4), Inches(4.2), [
         "一个骨干统一真伪、类型与定位",
-        "类型 F1 0.849，定位 mIoU 0.584",
+        "类型 F1 0.849，定位 mIoU 0.603（TTA）",
         "压缩增强后 q90 AUC 0.85 → 0.89",
         "支持阈值校准与快慢级联",
         "代码与最优权重已开源",

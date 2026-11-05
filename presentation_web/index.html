@@ -1828,13 +1828,13 @@
       <div style="display:flex;flex-direction:column;gap:2.4vh;justify-content:center">
         <div class="t-meta">PURE CASIA VALIDATION · 2,866</div>
         <h2 style="font-family:var(--sans),var(--sans-zh);font-weight:200;font-size:min(6.2vw,10.6vh);line-height:.96;letter-spacing:-.035em">类型与定位<br/>达到可用线</h2>
-        <p class="lead" style="font-weight:300;max-width:38ch">相比 ep5：类型 F1 +13.1，定位 mIoU +25.2。</p>
-        <div class="t-help" style="color:var(--text-helper)">256px 小骨干：F1 0.818→0.849，mIoU 0.490→0.584；AUC 略低。</div>
+        <p class="lead" style="font-weight:300;max-width:38ch">相比 ep5：类型 F1 +13.1，定位 mIoU +27.1（TTA）。</p>
+        <div class="t-help" style="color:var(--text-helper)">256px 小骨干：F1 0.818→0.849，mIoU 0.490→0.603；AUC 0.977→0.969。</div>
       </div>
       <div class="bar-towers" style="margin-top:0">
         <div class="bar-tower" data-anim="tower"><div class="cap"><span class="t-meta">TYPE</span></div><div class="body-block h-3 b-accent"><div class="lbl">MACRO-F1</div><div class="nb">0.849</div><div class="sub">四类加权，ep20 EMA</div></div></div>
-        <div class="bar-tower" data-anim="tower"><div class="cap"><span class="t-meta">SEG</span></div><div class="body-block h-2"><div class="lbl">MIOU</div><div class="nb">0.584</div><div class="sub">像素级定位，ep30</div></div></div>
-        <div class="bar-tower" data-anim="tower"><div class="cap"><span class="t-meta">AUC</span></div><div class="body-block h-3"><div class="lbl">BINARY</div><div class="nb">0.963</div><div class="sub">真伪判别，ep20 EMA</div></div></div>
+        <div class="bar-tower" data-anim="tower"><div class="cap"><span class="t-meta">SEG</span></div><div class="body-block h-2"><div class="lbl">MIOU</div><div class="nb">0.603</div><div class="sub">像素级定位，ep30+TTA</div></div></div>
+        <div class="bar-tower" data-anim="tower"><div class="cap"><span class="t-meta">AUC</span></div><div class="body-block h-3"><div class="lbl">BINARY</div><div class="nb">0.969</div><div class="sub">真伪判别，ep20+专用头</div></div></div>
         <div class="bar-tower" data-anim="tower"><div class="cap"><span class="t-meta">COPY</span></div><div class="body-block h-2"><div class="lbl">RECALL</div><div class="nb">0.765</div><div class="sub">复制移动，最弱项</div></div></div>
       </div>
     </div>
@@ -1859,7 +1859,7 @@
   <span class="yr">EP 20</span><span class="multi">0.849</span>
   <p class="desc">分类最佳</p></div><div class="tl-node" data-anim="node"><div class="tl-axis"><span class="dot"></span></div>
   <span class="yr">EP 30</span><span class="multi">0.839</span>
-  <p class="desc">分割最佳 0.584</p></div></div>
+  <p class="desc">分割 0.603（TTA）</p></div></div>
         <div style="display:flex;flex-direction:column;gap:2.2vh;border-top:2px solid var(--accent);padding-top:2vh">
           <div class="t-meta">READING</div>
           <p class="t-body" style="font-weight:300">类型与定位同步提升，说明共享证据能同时服务分类与定位，而不是此消彼长。</p>
@@ -1924,8 +1924,8 @@
         Gradio 单页应用，本机 5060 或 A40 服务器（bf16，端到端 81 ms）；上传后同时给出真伪概率、类型分布、热图与四分支证据图。
       </div>
       <div class="image-hero-stats" style="gap:4vw">
-        <div style="display:flex;flex-direction:column;gap:.6vh"><div style="height:1px;background:var(--ink)"></div><div class="t-meta">TAMPER PROB</div><div style="font-family:var(--sans);font-weight:200;font-size:min(4.6vw,7.6vh);line-height:.95;letter-spacing:-.04em;color:var(--accent-display)">96.1%</div><p class="body-sm">阈值 0.42 校准</p></div>
-        <div style="display:flex;flex-direction:column;gap:.6vh"><div style="height:1px;background:var(--ink)"></div><div class="t-meta">SPLICE</div><div style="font-family:var(--sans);font-weight:200;font-size:min(4.6vw,7.6vh);line-height:.95;letter-spacing:-.04em">96.8%</div><p class="body-sm">类型预测</p></div>
+        <div style="display:flex;flex-direction:column;gap:.6vh"><div style="height:1px;background:var(--ink)"></div><div class="t-meta">TAMPER PROB</div><div style="font-family:var(--sans);font-weight:200;font-size:min(4.6vw,7.6vh);line-height:.95;letter-spacing:-.04em;color:var(--accent-display)">99.9%</div><p class="body-sm">专用头 · 阈值 0.5</p></div>
+        <div style="display:flex;flex-direction:column;gap:.6vh"><div style="height:1px;background:var(--ink)"></div><div class="t-meta">SPLICE</div><div style="font-family:var(--sans);font-weight:200;font-size:min(4.6vw,7.6vh);line-height:.95;letter-spacing:-.04em">96.9%</div><p class="body-sm">类型预测</p></div>
         <div style="display:flex;flex-direction:column;gap:.6vh"><div style="height:1px;background:var(--ink)"></div><div class="t-meta">MODEL</div><div style="font-family:var(--sans);font-weight:200;font-size:min(2.6vw,4.6vh);line-height:1;letter-spacing:-.02em">last_ema</div><p class="body-sm">448 px · 鲁棒版</p></div>
       </div>
     </div>
