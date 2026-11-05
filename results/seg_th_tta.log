@@ -1,0 +1,16 @@
+ckpt=ep30_raw.pth tta=True samples=2862
+  th=0.20  mIoU=0.5958
+  th=0.25  mIoU=0.5988
+  th=0.30  mIoU=0.6009
+  th=0.35  mIoU=0.6021
+  th=0.40  mIoU=0.6029
+  th=0.45  mIoU=0.6023
+  th=0.50  mIoU=0.5935
+  th=0.55  mIoU=0.5827
+  th=0.60  mIoU=0.5767
+  th=0.65  mIoU=0.5712
+  th=0.70  mIoU=0.5659
+  th=0.75  mIoU=0.5601
+  th=0.80  mIoU=0.5535
+  th=0.85  mIoU=0.5455
+best th=0.40  mIoU=0.6029
