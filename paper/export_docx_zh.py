@@ -13,7 +13,7 @@ from docx.oxml.ns import qn
 
 _PAPER = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(_PAPER, "manuscript_zh.docx")
-FIG_ARCH = os.path.join(_PAPER, "figures", "architecture.png")
+FIG_ARCH = os.path.join(_PAPER, "figures", "fig1_architecture_v3_nature.png")
 FIG_EVIDENCE = os.path.join(_PAPER, "figures", "evidence_map.png")
 
 ABSTRACT = ("文本到图像生成模型的快速发展，使得 AI 生成图像越来越难以与真实照片区分；"
@@ -323,10 +323,10 @@ def main():
             add_table(doc, header, rows)
         elif kind == "figure1":
             _add_figure(doc, FIG_ARCH,
-                "图 1. 所提出的四分支注意力融合网络（FBFN）总体结构。CNN 与 ViT 分支捕获语义外观，噪声（ELA + SRM）与颜色（Lab + 熵）分支捕获物理可解释的低级伪影；每个分支产生一张像素级证据图。四张图由通道-空间双重注意力模块融合，并全局池化为图像级真/假分数。")
+                "图 1. FBFN v3.0 总体结构。输入 448×448 图像经四个证据分支（CNN：ResNet-34 + UNet++；ViT：DINOv2 ViT-L/14；噪声：ELA + SRM；颜色：Lab + 局部熵）得到四张单通道证据图，经通道-空间双重注意力融合为一张证据图用于像素级定位；共享 128 维主干同时输出真伪与四类篡改类型。训练损失为 L = L_seg + 0.5·L_bin + 0.5·L_type。")
         elif kind == "figure2":
             _add_figure(doc, FIG_EVIDENCE,
-                "图 2. 一张真实图像（上）和一张生成图像（下）的分支证据图。每个分支输出单通道伪造概率图（暖色 = 伪造概率更高）；融合图综合四者。噪声与颜色分支突出了 RGB 输入中不可见的残差与颜色统计伪影，使决策可检查。")
+                "图 2. 真实图像（上）与篡改图像（下）的分支证据图。每个分支输出单通道伪造概率图（暖色 = 伪造概率更高）；融合图综合四者。噪声与颜色分支突出了 RGB 输入中不可见的残差与颜色统计伪影，使决策可检查。")
 
     for i, ref in enumerate(REFERENCES, 1):
         p = doc.add_paragraph()
