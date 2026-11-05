@@ -25,3 +25,6 @@ presentation/output/rendered/
 
 # 网页 PPT 渲染预览
 presentation_web/rendered/
+
+# PPTX 导出预览
+paper/ppt_preview/
