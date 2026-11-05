@@ -5,7 +5,9 @@ import re
 
 from docx import Document
 from docx.shared import Pt, Inches
-from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, "manuscript_jvcir.md")
@@ -28,6 +30,16 @@ def main():
     st = doc.styles["Normal"]
     st.font.name = "Times New Roman"
     st.font.size = Pt(11)
+    st.paragraph_format.line_spacing_rule = WD_LINE_SPACING.DOUBLE
+    st.paragraph_format.space_after = Pt(0)
+
+    # page number in footer
+    footer_p = doc.sections[0].footer.paragraphs[0]
+    footer_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    run = footer_p.add_run()
+    fld = OxmlElement("w:fldSimple")
+    fld.set(qn("w:instr"), "PAGE")
+    run._r.addnext(fld)
 
     i = 0
     while i < len(lines):

@@ -12,7 +12,7 @@ Co-author email: Chuntong Jiang, 2796959858@qq.com
 
 ## Abstract
 
-Image tampering detection in anti-fraud scenarios requires more than a real/fake score: investigators need the manipulation type and location, and the detector must remain reliable after JPEG compression and resizing during social-media distribution. We present FBFN, a four-branch attention fusion network combining a CNN branch, a DINOv2 ViT branch, an ELA/SRM noise branch, and a Lab-entropy color branch. Four pixel-level evidence maps are fused by channel-and-spatial attention and jointly optimized for authenticity, four-class tampering type, and pixel-level localization. On 2,866 real CASIA validation images, FBFN reaches binary AUC 0.9686 (accuracy 89.36%, F1 87.05%), type macro-F1 0.849, and localization mIoU 0.6029 with flip test-time augmentation. Random JPEG/resize/blur augmentation raises the JPEG q90 AUC from 0.850 to 0.888 and blurred-image F1 by 34.9 points while leaving clean metrics unchanged. Under the same protocol, FBFN outperforms TruFor at image-level detection (AUC 0.9686 vs. 0.9463), while TruFor remains stronger at localization (mIoU 0.665 vs. 0.603). bf16 inference takes 34 ms per image on an A40 (81 ms end-to-end) without measurable accuracy loss. Cross-dataset evaluation on COVERAGE exposes a clear limitation: zero-shot AUC is only 0.55–0.58, showing that the model is specialized to CASIA-style and compressed images; closing this gap requires similar-object copy-move data in large-scale training rather than brief fine-tuning.
+Image tampering detection in anti-fraud scenarios requires more than a real/fake score: investigators need the manipulation type and location, and the detector must remain reliable after compression and resizing in social-media distribution. We present FBFN, a four-branch attention fusion network combining CNN, DINOv2 ViT, ELA/SRM noise, and Lab-entropy color branches. Four evidence maps are fused by channel-and-spatial attention and jointly optimized for authenticity, four-class tampering type, and pixel-level localization. On 2,866 real CASIA validation images, FBFN reaches AUC 0.9686 (accuracy 89.36%, F1 87.05%), type macro-F1 0.849, and localization mIoU 0.6029 with flip test-time augmentation. JPEG/resize/blur training raises JPEG q90 AUC from 0.850 to 0.888 without clean loss. Under the same protocol, FBFN outperforms TruFor at image-level detection (AUC 0.9686 vs. 0.9463), while TruFor remains stronger at localization (0.665 vs. 0.603). bf16 inference takes 34 ms per image on an A40. COVERAGE cross-dataset zero-shot AUC is 0.55–0.58, defining the scope.
 
 **Keywords:** image tampering detection; tampering type classification; forgery localization; attention fusion; robustness; mixed-precision inference.
 
@@ -322,19 +322,19 @@ The GenImage benchmark used in this study is publicly available via the TIGAS mi
 
 ## References
 
-[1] Zhu, M., Chen, H., Yan, Q., et al.: "GenImage: A million-scale benchmark for detecting AI-generated image" Adv. Neural Inf. Process. Syst., 2023, 36.
-[2] Wang, S.-Y., Wang, O., Zhang, R., Owens, A., Efros, A.A.: "CNN-generated images are surprisingly easy to spot... for now" Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit., 2020, pp. 8695–8704.
-[3] Krawetz, N.: "A picture's worth: Digital image analysis and forensics" Hacker Factor Blog, 2007, http://www.hackerfactor.com/blog/, accessed August 2026.
-[4] Fridrich, J., Kodovský, J.: "Rich models for steganalysis of digital images" IEEE Trans. Inf. Forensics Secur., 2012, 7, (3), pp. 868–882.
-[5] Wang, H., Cheng, R., Zhang, Y., Han, C., Gui, J.: "LOTA: Bit-planes guided AI-generated image detection" Proc. IEEE/CVF Int. Conf. Comput. Vis., 2025.
-[6] Radford, A., Kim, J.W., Hallacy, C., et al.: "Learning transferable visual models from natural language supervision" Proc. Int. Conf. Mach. Learn., 2021, 139, pp. 8748–8763.
-[7] Ojha, U., Li, Y., Lee, Y.J.: "Towards universal fake image detectors that generalize across generative models" Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit., 2023, pp. 24480–24489.
-[8] He, K., Zhang, X., Ren, S., Sun, J.: "Deep residual learning for image recognition" Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit., 2016, pp. 770–778.
-[9] Liu, Z., Lin, Y., Cao, Y., et al.: "Swin transformer: Hierarchical vision transformer using shifted windows" Proc. IEEE/CVF Int. Conf. Comput. Vis., 2021, pp. 10012–10022.
-[10] Xie, E., Wang, W., Yu, Z., Anandkumar, A., Alvarez, J.M., Luo, P.: "SegFormer: Simple and efficient design for semantic segmentation with transformers" Adv. Neural Inf. Process. Syst., 2021, 34, pp. 12077–12090.
-[11] Zhou, Z., Rahman Siddiquee, M.M., Tajbakhsh, N., Liang, J.: "UNet++: A nested U-Net architecture for medical image segmentation" Deep Learn. Med. Image Anal. Multimodal Learn. Clin. Decis. Support, 2018, pp. 3–11.
-[12] H1merka: "TIGAS dataset" Hugging Face, https://huggingface.co/datasets/H1merka/TIGAS_dataset, accessed August 2026.
-[13] Kahneman, D.: "Thinking, fast and slow" Farrar, Straus and Giroux, 2011.
-[14] Weston, J., Sukhbaatar, S.: "System 2 attention (is something you might need too)" arXiv preprint arXiv:2311.11829, 2023.
-[15] Guillaro, F., Cozzolino, D., Sud, A., Dufour, N., Verdoliva, L.: "TruFor: Leveraging all-round clues for trustworthy image forgery detection and localization" Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit., 2023, pp. 20606–20615.
-[16] Wen, B., Zhu, Y., Subramanian, R., Ng, T.-T., Shen, X., Winkler, S.: "COVERAGE — A novel database for copy-move forgery detection" Proc. IEEE Int. Conf. Image Process., 2016, pp. 161–165.
+[1] M. Zhu, H. Chen, Q. Yan, et al., GenImage: a million-scale benchmark for detecting AI-generated image, Adv. Neural Inf. Process. Syst. 36 (2023).
+[2] S.-Y. Wang, O. Wang, R. Zhang, A. Owens, A.A. Efros, CNN-generated images are surprisingly easy to spot... for now, in: Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit., 2020, pp. 8695–8704.
+[3] N. Krawetz, A picture's worth: digital image analysis and forensics, Hacker Factor Blog (2007). http://www.hackerfactor.com/blog/ (accessed August 2026).
+[4] J. Fridrich, J. Kodovský, Rich models for steganalysis of digital images, IEEE Trans. Inf. Forensics Secur. 7 (3) (2012) 868–882.
+[5] H. Wang, R. Cheng, Y. Zhang, C. Han, J. Gui, LOTA: bit-planes guided AI-generated image detection, in: Proc. IEEE/CVF Int. Conf. Comput. Vis., 2025.
+[6] A. Radford, J.W. Kim, C. Hallacy, et al., Learning transferable visual models from natural language supervision, in: Proc. Int. Conf. Mach. Learn. 139 (2021) 8748–8763.
+[7] U. Ojha, Y. Li, Y.J. Lee, Towards universal fake image detectors that generalize across generative models, in: Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit., 2023, pp. 24480–24489.
+[8] K. He, X. Zhang, S. Ren, J. Sun, Deep residual learning for image recognition, in: Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit., 2016, pp. 770–778.
+[9] Z. Liu, Y. Lin, Y. Cao, et al., Swin transformer: hierarchical vision transformer using shifted windows, in: Proc. IEEE/CVF Int. Conf. Comput. Vis., 2021, pp. 10012–10022.
+[10] E. Xie, W. Wang, Z. Yu, A. Anandkumar, J.M. Alvarez, P. Luo, SegFormer: simple and efficient design for semantic segmentation with transformers, Adv. Neural Inf. Process. Syst. 34 (2021) 12077–12090.
+[11] Z. Zhou, M.M. Rahman Siddiquee, N. Tajbakhsh, J. Liang, UNet++: a nested U-Net architecture for medical image segmentation, in: Deep Learn. Med. Image Anal. Multimodal Learn. Clin. Decis. Support, 2018, pp. 3–11.
+[12] H1merka, TIGAS dataset, Hugging Face. https://huggingface.co/datasets/H1merka/TIGAS_dataset (accessed August 2026).
+[13] D. Kahneman, Thinking, Fast and Slow, Farrar, Straus and Giroux, 2011.
+[14] J. Weston, S. Sukhbaatar, System 2 attention (is something you might need too), arXiv preprint arXiv:2311.11829, 2023.
+[15] F. Guillaro, D. Cozzolino, A. Sud, N. Dufour, L. Verdoliva, TruFor: leveraging all-round clues for trustworthy image forgery detection and localization, in: Proc. IEEE/CVF Conf. Comput. Vis. Pattern Recognit., 2023, pp. 20606–20615.
+[16] B. Wen, Y. Zhu, R. Subramanian, T.-T. Ng, X. Shen, S. Winkler, COVERAGE — a novel database for copy-move forgery detection, in: Proc. IEEE Int. Conf. Image Process., 2016, pp. 161–165.
