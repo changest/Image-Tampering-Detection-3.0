@@ -17,3 +17,4 @@ Sincerely,
 Jie Lu (卢杰), Xiaobo Li (李晓波), Chuntong Jiang (姜春彤), Fulan Wang (汪福兰)
 Taiyuan University of Technology, Taiyuan, Shanxi, China
 Corresponding author: Jie Lu, lujie123456bhjcyx@qq.com
+Chuntong Jiang: 2796959858@qq.com
