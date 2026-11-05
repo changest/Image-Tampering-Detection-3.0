@@ -12,6 +12,7 @@ import os
 
 import cv2
 import gradio as gr
+import joblib
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -23,6 +24,26 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 TYPE_NAMES = {0: "真实", 1: "拼接", 2: "复制移动", 3: "AI 生成"}
 
 
+def load_binhead(path):
+    if not path or not os.path.exists(path):
+        return None
+    return joblib.load(path)
+
+
+def binhead_feature(bin_logit, final_map, type_logits):
+    fm = final_map.float().flatten(1)
+    k = max(1, fm.shape[1] // 100)
+    f = torch.cat([
+        bin_logit.float().reshape(-1, 1),
+        fm.max(1).values[:, None],
+        fm.topk(k, dim=1).values.mean(1)[:, None],
+        fm.mean(1)[:, None],
+        fm.std(1)[:, None],
+        type_logits.float(),
+    ], dim=1)
+    return f.cpu().numpy()
+
+
 def load_model(ckpt, img_size, device):
     from .type_model_large import FBFNTypeLarge
     model = FBFNTypeLarge(pretrained=False, img_size=img_size).to(device)
@@ -32,7 +53,7 @@ def load_model(ckpt, img_size, device):
 
 
 @torch.inference_mode()
-def infer(model, img_rgb, img_size, device, thr, temp, amp_dtype=None):
+def infer(model, img_rgb, img_size, device, thr, temp, amp_dtype=None, binhead=None):
     h0, w0 = img_rgb.shape[:2]
     img = cv2.resize(img_rgb, (img_size, img_size), interpolation=cv2.INTER_LINEAR)
     rgb = img.transpose(2, 0, 1).astype(np.float32) / 255.0
@@ -57,7 +78,13 @@ def infer(model, img_rgb, img_size, device, thr, temp, amp_dtype=None):
         type_logits = model.type_fc(tfeat)
         bin_logit = model.bin_fc(tfeat).squeeze(1)
 
-    prob = float(torch.sigmoid((bin_logit.float()) / temp).item())
+    if binhead is not None:
+        f = binhead_feature(bin_logit, final_map, type_logits)
+        f = (f - binhead["mu"]) / binhead["sd"]
+        prob = float(binhead["model"].predict_proba(f)[0, 1])
+        prob = min(max(prob, 0.001), 0.999)
+    else:
+        prob = float(torch.sigmoid((bin_logit.float()) / temp).item())
     type_prob = torch.softmax(type_logits.float(), 1)[0].cpu().numpy()
     t_idx = int(type_prob.argmax())
 
@@ -82,12 +109,13 @@ def infer(model, img_rgb, img_size, device, thr, temp, amp_dtype=None):
         f"- 篡改概率：**{prob * 100:.1f}%**（判定阈值 {thr:.2f}）\n"
         f"- 类型预测：**{TYPE_NAMES[t_idx]}**（{type_prob[t_idx] * 100:.1f}%）；"
         f"各类概率 " + "，".join(f"{TYPE_NAMES[i]} {p * 100:.1f}%" for i, p in enumerate(type_prob)) + "\n"
-        f"- 说明：概率经温度缩放（T={temp}）校准，阈值针对 CASIA 场景；换数据域需重新校准。"
+        f"- 说明：" + ("专用二分类头（冻结骨干，阈值 0.5）" if binhead is not None
+                           else f"概率经温度缩放（T={temp}）校准") + "；阈值针对 CASIA 场景，换数据域需重新校准。"
     )
     return overlay, maps, text
 
 
-def build(ckpt, img_size, thr, temp, amp_dtype=None):
+def build(ckpt, img_size, thr, temp, amp_dtype=None, binhead=None):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = load_model(ckpt, img_size, device)
     if device.type == "cuda":
@@ -97,7 +125,7 @@ def build(ckpt, img_size, thr, temp, amp_dtype=None):
         if image is None:
             return None, [], "请上传一张图片"
         img_rgb = np.array(image.convert("RGB")) if hasattr(image, "convert") else image
-        overlay, maps, text = infer(model, img_rgb, img_size, device, thr, temp, amp_dtype)
+        overlay, maps, text = infer(model, img_rgb, img_size, device, thr, temp, amp_dtype, binhead)
         gallery = [(m, f"{n} 证据图") for n, m in maps]
         return overlay, gallery, text
 
@@ -128,10 +156,14 @@ def main():
     ap.add_argument("--port", type=int, default=7860)
     ap.add_argument("--host", default="127.0.0.1")
     ap.add_argument("--dtype", choices=["fp32", "bf16", "fp16"], default="fp32")
+    ap.add_argument("--binhead", default="", help="专用二分类头 pkl（fit_binary_head 输出）")
     ap.add_argument("--inbrowser", action="store_true")
     args = ap.parse_args()
     amp = {"fp32": None, "bf16": torch.bfloat16, "fp16": torch.float16}[args.dtype]
-    demo = build(args.ckpt, args.img_size, args.thr, args.temp, amp)
+    head = load_binhead(args.binhead)
+    if head is not None:
+        args.thr = 0.5
+    demo = build(args.ckpt, args.img_size, args.thr, args.temp, amp, head)
     demo.launch(server_name=args.host, server_port=args.port, inbrowser=args.inbrowser)
 
 

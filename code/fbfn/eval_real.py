@@ -6,6 +6,7 @@ import os
 
 import numpy as np
 import torch
+import joblib
 from torch.utils.data import DataLoader, Subset
 from sklearn.metrics import roc_auc_score, f1_score, confusion_matrix, classification_report
 
@@ -32,6 +33,7 @@ def main():
     ap.add_argument("--fusion", action="store_true",
                     help="报告二分类 logit 与 final_map max-pool 的融合 AUC")
     ap.add_argument("--alpha", type=float, default=0.75)
+    ap.add_argument("--binhead", default="", help="专用二分类头 pkl（fit_binary_head 输出）")
     args = ap.parse_args()
     amp_dtype = {"fp32": None, "bf16": torch.bfloat16, "fp16": torch.float16}[args.amp]
 
@@ -55,7 +57,7 @@ def main():
     model.eval()
 
     ys, ps, yt, pt = [], [], [], []
-    zlist, mlist = [], []
+    zlist, mlist, featlist = [], [], []
     tp = fp = fn = 0.0
     amp = torch.autocast("cuda", dtype=amp_dtype) if amp_dtype is not None else contextlib.nullcontext()
     with torch.no_grad(), amp:
@@ -66,6 +68,15 @@ def main():
             ps.append(torch.sigmoid(out["final"].float()).cpu().numpy())
             zlist.append(out["final"].float().cpu().numpy())
             mlist.append(out["final_map"].float().flatten(1).max(1).values.cpu().numpy())
+            fm = out["final_map"].float().flatten(1)
+            k = max(1, fm.shape[1] // 100)
+            featlist.append(np.concatenate([
+                out["final"].float().cpu().numpy()[:, None],
+                fm.max(1).values.cpu().numpy()[:, None],
+                fm.topk(k, dim=1).values.mean(1).cpu().numpy()[:, None],
+                fm.mean(1).cpu().numpy()[:, None],
+                fm.std(1).cpu().numpy()[:, None],
+                out["type"].float().cpu().numpy()], axis=1))
             pt.append(out["type"].argmax(1).cpu().numpy())
             ys.append(y.numpy()); yt.append(t.numpy())
             pm = (torch.sigmoid(out["final_map"].float()) > 0.5).float()
