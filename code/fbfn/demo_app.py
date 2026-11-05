@@ -7,6 +7,7 @@
 然后在浏览器打开 http://127.0.0.1:7860
 """
 import argparse
+import contextlib
 import os
 
 import cv2
@@ -31,7 +32,7 @@ def load_model(ckpt, img_size, device):
 
 
 @torch.inference_mode()
-def infer(model, img_rgb, img_size, device, thr, temp):
+def infer(model, img_rgb, img_size, device, thr, temp, amp_dtype=None):
     h0, w0 = img_rgb.shape[:2]
     img = cv2.resize(img_rgb, (img_size, img_size), interpolation=cv2.INTER_LINEAR)
     rgb = img.transpose(2, 0, 1).astype(np.float32) / 255.0
@@ -44,21 +45,23 @@ def infer(model, img_rgb, img_size, device, thr, temp):
     ent_t = torch.from_numpy(ent[None]).to(device)
     ela_t = torch.from_numpy(ela[None]).to(device)
 
-    p_cnn = model.cnn_branch(x)
-    p_vit = model.vit_branch(x)
-    p_ela = model.noise_branch(x, ela=ela_t)
-    p_col = model.color_branch(x, entropy=ent_t)
-    final_map, att = model.fusion([p_cnn, p_vit, p_ela, p_col])
-    feats = torch.cat([p_cnn, p_vit, p_ela, p_col], dim=1)
-    tfeat = model.type_trunk(feats)
-    type_logits = model.type_fc(tfeat)
-    bin_logit = model.bin_fc(tfeat).squeeze(1)
+    amp = torch.autocast("cuda", dtype=amp_dtype) if amp_dtype is not None else contextlib.nullcontext()
+    with amp:
+        p_cnn = model.cnn_branch(x)
+        p_vit = model.vit_branch(x)
+        p_ela = model.noise_branch(x, ela=ela_t)
+        p_col = model.color_branch(x, entropy=ent_t)
+        final_map, att = model.fusion([p_cnn, p_vit, p_ela, p_col])
+        feats = torch.cat([p_cnn, p_vit, p_ela, p_col], dim=1)
+        tfeat = model.type_trunk(feats)
+        type_logits = model.type_fc(tfeat)
+        bin_logit = model.bin_fc(tfeat).squeeze(1)
 
-    prob = float(torch.sigmoid(bin_logit / temp).item())
-    type_prob = torch.softmax(type_logits, 1)[0].cpu().numpy()
+    prob = float(torch.sigmoid((bin_logit.float()) / temp).item())
+    type_prob = torch.softmax(type_logits.float(), 1)[0].cpu().numpy()
     t_idx = int(type_prob.argmax())
 
-    heat = torch.sigmoid(final_map)[0, 0].cpu().numpy()
+    heat = torch.sigmoid(final_map.float())[0, 0].cpu().numpy()
     heat = cv2.resize(heat, (w0, h0), interpolation=cv2.INTER_LINEAR)
     heat_u8 = (heat * 255).clip(0, 255).astype(np.uint8)
     colored = cv2.applyColorMap(heat_u8, cv2.COLORMAP_JET)
@@ -67,7 +70,7 @@ def infer(model, img_rgb, img_size, device, thr, temp):
 
     maps = []
     for name, t in (("CNN", p_cnn), ("ViT", p_vit), ("ELA/SRM", p_ela), ("颜色/熵", p_col)):
-        m = torch.sigmoid(t)[0, 0].cpu().numpy()
+        m = torch.sigmoid(t.float())[0, 0].cpu().numpy()
         m = cv2.resize(m, (w0, h0), interpolation=cv2.INTER_LINEAR)
         c = cv2.applyColorMap((m * 255).clip(0, 255).astype(np.uint8), cv2.COLORMAP_INFERNO)
         maps.append((name, cv2.cvtColor(c, cv2.COLOR_BGR2RGB)))
@@ -84,7 +87,7 @@ def infer(model, img_rgb, img_size, device, thr, temp):
     return overlay, maps, text
 
 
-def build(ckpt, img_size, thr, temp):
+def build(ckpt, img_size, thr, temp, amp_dtype=None):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = load_model(ckpt, img_size, device)
     if device.type == "cuda":
@@ -94,7 +97,7 @@ def build(ckpt, img_size, thr, temp):
         if image is None:
             return None, [], "请上传一张图片"
         img_rgb = np.array(image.convert("RGB")) if hasattr(image, "convert") else image
-        overlay, maps, text = infer(model, img_rgb, img_size, device, thr, temp)
+        overlay, maps, text = infer(model, img_rgb, img_size, device, thr, temp, amp_dtype)
         gallery = [(m, f"{n} 证据图") for n, m in maps]
         return overlay, gallery, text
 
@@ -123,10 +126,13 @@ def main():
     ap.add_argument("--thr", type=float, default=0.42)
     ap.add_argument("--temp", type=float, default=1.849)
     ap.add_argument("--port", type=int, default=7860)
+    ap.add_argument("--host", default="127.0.0.1")
+    ap.add_argument("--dtype", choices=["fp32", "bf16", "fp16"], default="fp32")
     ap.add_argument("--inbrowser", action="store_true")
     args = ap.parse_args()
-    demo = build(args.ckpt, args.img_size, args.thr, args.temp)
-    demo.launch(server_name="127.0.0.1", server_port=args.port, inbrowser=args.inbrowser)
+    amp = {"fp32": None, "bf16": torch.bfloat16, "fp16": torch.float16}[args.dtype]
+    demo = build(args.ckpt, args.img_size, args.thr, args.temp, amp)
+    demo.launch(server_name=args.host, server_port=args.port, inbrowser=args.inbrowser)
 
 
 if __name__ == "__main__":
