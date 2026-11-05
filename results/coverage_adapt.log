@@ -1,0 +1,317 @@
+train 80 val 20 test 100
+[ WARN:0@11.982] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@12.020] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@12.050] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@12.086] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@12.110] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@12.148] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@12.170] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@12.214] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@12.251] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@12.316] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@12.962] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@13.048] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@15.512] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@15.576] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+zero-shot test: (0.554, 0.5, 0.6666666666666666, 0.01480546301286753)
+/pfm/disks/core/lxbo/miniconda3/envs/fbfn/lib/python3.10/site-packages/torch/utils/checkpoint.py:1399: FutureWarning: `torch.cpu.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cpu', args...)` instead.
+  with device_autocast_ctx, torch.cpu.amp.autocast(**cpu_autocast_kwargs), recompute_context:  # type: ignore[attr-defined]
+[ WARN:0@32.950] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@33.285] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@33.348] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@34.846] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@34.888] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@34.898] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@34.943] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@34.944] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@34.999] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@35.006] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@35.056] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@35.079] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@35.134] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@35.135] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@35.191] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@37.124] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@37.177] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+ep1 loss=3.069 val AUC/F1/mIoU=(0.655, 0.6, 0.5, 0.32593277829151557) test AUC/F1/mIoU=(0.5364, 0.5, 0.46808510638297873, 0.07349687358027626)
+/pfm/disks/core/lxbo/miniconda3/envs/fbfn/lib/python3.10/site-packages/torch/utils/checkpoint.py:1399: FutureWarning: `torch.cpu.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cpu', args...)` instead.
+  with device_autocast_ctx, torch.cpu.amp.autocast(**cpu_autocast_kwargs), recompute_context:  # type: ignore[attr-defined]
+[ WARN:0@52.600] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@53.198] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@53.255] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@54.905] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@54.931] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@54.964] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@55.016] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@55.068] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@55.088] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@55.138] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@55.158] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@55.193] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@55.212] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@55.285] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@55.342] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@57.138] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@57.191] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+ep2 loss=2.915 val AUC/F1/mIoU=(0.59, 0.6, 0.5, 0.2866290416690375) test AUC/F1/mIoU=(0.5314, 0.52, 0.38461538461538464, 0.10586038383619317)
+/pfm/disks/core/lxbo/miniconda3/envs/fbfn/lib/python3.10/site-packages/torch/utils/checkpoint.py:1399: FutureWarning: `torch.cpu.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cpu', args...)` instead.
+  with device_autocast_ctx, torch.cpu.amp.autocast(**cpu_autocast_kwargs), recompute_context:  # type: ignore[attr-defined]
+[ WARN:0@73.677] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@74.063] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@74.120] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@75.680] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@75.681] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@75.737] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@75.787] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@75.837] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@75.916] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@75.922] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@75.986] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@75.995] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@76.041] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@76.113] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@76.169] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@77.901] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@77.953] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+ep3 loss=2.541 val AUC/F1/mIoU=(0.59, 0.6, 0.5, 0.2889512816511782) test AUC/F1/mIoU=(0.5166, 0.52, 0.42857142857142855, 0.1187659835713191)
+/pfm/disks/core/lxbo/miniconda3/envs/fbfn/lib/python3.10/site-packages/torch/utils/checkpoint.py:1399: FutureWarning: `torch.cpu.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cpu', args...)` instead.
+  with device_autocast_ctx, torch.cpu.amp.autocast(**cpu_autocast_kwargs), recompute_context:  # type: ignore[attr-defined]
+[ WARN:0@90.581] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@91.138] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@91.200] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@92.936] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@92.937] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@93.003] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@93.058] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@93.112] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@93.185] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@93.224] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@93.247] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@93.299] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@93.359] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@93.435] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@93.497] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@95.365] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@95.425] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+ep4 loss=2.385 val AUC/F1/mIoU=(0.59, 0.6, 0.5, 0.2722858083506312) test AUC/F1/mIoU=(0.522, 0.53, 0.45977011494252873, 0.1287687456662858)
+/pfm/disks/core/lxbo/miniconda3/envs/fbfn/lib/python3.10/site-packages/torch/utils/checkpoint.py:1399: FutureWarning: `torch.cpu.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cpu', args...)` instead.
+  with device_autocast_ctx, torch.cpu.amp.autocast(**cpu_autocast_kwargs), recompute_context:  # type: ignore[attr-defined]
+[ WARN:0@109.993] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@110.594] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@110.657] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@112.236] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@112.245] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@112.303] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@112.316] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@112.377] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@112.402] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@112.430] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@112.473] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@112.500] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@112.549] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@112.554] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@112.612] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@114.610] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@114.662] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+ep5 loss=2.220 val AUC/F1/mIoU=(0.5800000000000001, 0.6, 0.5, 0.26733492649439416) test AUC/F1/mIoU=(0.518, 0.52, 0.42857142857142855, 0.12849228640331573)
+/pfm/disks/core/lxbo/miniconda3/envs/fbfn/lib/python3.10/site-packages/torch/utils/checkpoint.py:1399: FutureWarning: `torch.cpu.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cpu', args...)` instead.
+  with device_autocast_ctx, torch.cpu.amp.autocast(**cpu_autocast_kwargs), recompute_context:  # type: ignore[attr-defined]
+[ WARN:0@128.307] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@128.785] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@128.849] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@130.558] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@130.573] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@130.621] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@130.638] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@130.678] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@130.698] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@130.735] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@130.759] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@130.813] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@130.838] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@130.876] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@130.900] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@133.001] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@133.060] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+ep6 loss=2.010 val AUC/F1/mIoU=(0.59, 0.6, 0.5, 0.2685594546213554) test AUC/F1/mIoU=(0.5282, 0.56, 0.4883720930232558, 0.12860781867732146)
+/pfm/disks/core/lxbo/miniconda3/envs/fbfn/lib/python3.10/site-packages/torch/utils/checkpoint.py:1399: FutureWarning: `torch.cpu.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cpu', args...)` instead.
+  with device_autocast_ctx, torch.cpu.amp.autocast(**cpu_autocast_kwargs), recompute_context:  # type: ignore[attr-defined]
+[ WARN:0@153.779] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@154.282] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@154.339] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@155.785] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@155.792] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@155.860] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@155.928] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@155.980] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@156.047] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@156.103] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@156.108] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@156.178] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@156.232] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@156.301] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@156.355] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@158.194] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@158.252] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+ep7 loss=2.016 val AUC/F1/mIoU=(0.5999999999999999, 0.6, 0.5, 0.27304663153706865) test AUC/F1/mIoU=(0.5294, 0.54, 0.46511627906976744, 0.13211925509345757)
+/pfm/disks/core/lxbo/miniconda3/envs/fbfn/lib/python3.10/site-packages/torch/utils/checkpoint.py:1399: FutureWarning: `torch.cpu.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cpu', args...)` instead.
+  with device_autocast_ctx, torch.cpu.amp.autocast(**cpu_autocast_kwargs), recompute_context:  # type: ignore[attr-defined]
+[ WARN:0@170.758] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@171.275] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@171.338] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@173.177] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@173.177] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@173.246] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@173.344] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@173.364] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@173.405] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@173.423] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@173.465] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@173.500] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@173.545] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@173.564] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@173.605] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@175.651] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@175.703] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+ep8 loss=1.881 val AUC/F1/mIoU=(0.59, 0.6, 0.5555555555555556, 0.2698582697968078) test AUC/F1/mIoU=(0.537, 0.52, 0.5102040816326531, 0.13795117392827386)
+/pfm/disks/core/lxbo/miniconda3/envs/fbfn/lib/python3.10/site-packages/torch/utils/checkpoint.py:1399: FutureWarning: `torch.cpu.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cpu', args...)` instead.
+  with device_autocast_ctx, torch.cpu.amp.autocast(**cpu_autocast_kwargs), recompute_context:  # type: ignore[attr-defined]
+[ WARN:0@187.578] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@188.085] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@188.141] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@189.558] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@189.564] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@189.621] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@189.676] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@189.732] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@189.808] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@189.836] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@189.872] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@189.910] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@189.970] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@190.051] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@190.114] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@192.046] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@192.106] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+ep9 loss=1.916 val AUC/F1/mIoU=(0.61, 0.5, 0.6153846153846154, 0.2693221596034384) test AUC/F1/mIoU=(0.5452, 0.51, 0.6370370370370371, 0.14130916227821735)
+/pfm/disks/core/lxbo/miniconda3/envs/fbfn/lib/python3.10/site-packages/torch/utils/checkpoint.py:1399: FutureWarning: `torch.cpu.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cpu', args...)` instead.
+  with device_autocast_ctx, torch.cpu.amp.autocast(**cpu_autocast_kwargs), recompute_context:  # type: ignore[attr-defined]
+[ WARN:0@206.655] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@206.983] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@207.046] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@208.883] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@208.888] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@208.945] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@208.999] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@209.052] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@209.124] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@209.184] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@209.212] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@209.287] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@209.346] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@209.422] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@209.482] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@211.373] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@211.430] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+ep10 loss=1.742 val AUC/F1/mIoU=(0.61, 0.5, 0.6153846153846154, 0.26727092267632946) test AUC/F1/mIoU=(0.5494, 0.5, 0.6376811594202898, 0.14768530612453334)
+/pfm/disks/core/lxbo/miniconda3/envs/fbfn/lib/python3.10/site-packages/torch/utils/checkpoint.py:1399: FutureWarning: `torch.cpu.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cpu', args...)` instead.
+  with device_autocast_ctx, torch.cpu.amp.autocast(**cpu_autocast_kwargs), recompute_context:  # type: ignore[attr-defined]
+[ WARN:0@224.664] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@225.079] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@225.145] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@226.985] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@226.990] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@227.055] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@227.116] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@227.117] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@227.184] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@227.195] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@227.259] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@227.272] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@227.338] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@227.345] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@227.408] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@229.615] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@229.677] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+ep11 loss=1.798 val AUC/F1/mIoU=(0.605, 0.5, 0.6666666666666666, 0.2925726370378262) test AUC/F1/mIoU=(0.5428, 0.5, 0.6666666666666666, 0.14310180446667226)
+/pfm/disks/core/lxbo/miniconda3/envs/fbfn/lib/python3.10/site-packages/torch/utils/checkpoint.py:1399: FutureWarning: `torch.cpu.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cpu', args...)` instead.
+  with device_autocast_ctx, torch.cpu.amp.autocast(**cpu_autocast_kwargs), recompute_context:  # type: ignore[attr-defined]
+[ WARN:0@242.688] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@243.065] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@243.119] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@244.934] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@244.943] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@244.992] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@245.016] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@245.043] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@245.069] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@245.093] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@245.123] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@245.160] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@245.198] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@245.215] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@245.251] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@247.085] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@247.138] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+ep12 loss=1.645 val AUC/F1/mIoU=(0.62, 0.5, 0.6666666666666666, 0.29282137959610677) test AUC/F1/mIoU=(0.5384, 0.5, 0.6666666666666666, 0.14234373678733725)
+/pfm/disks/core/lxbo/miniconda3/envs/fbfn/lib/python3.10/site-packages/torch/utils/checkpoint.py:1399: FutureWarning: `torch.cpu.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cpu', args...)` instead.
+  with device_autocast_ctx, torch.cpu.amp.autocast(**cpu_autocast_kwargs), recompute_context:  # type: ignore[attr-defined]
+[ WARN:0@259.557] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@259.847] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@259.903] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@261.569] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@261.610] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@261.686] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@261.745] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@261.805] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@261.885] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@261.912] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@261.965] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@261.986] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@262.049] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@262.156] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@262.219] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@264.639] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@264.700] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+ep13 loss=1.510 val AUC/F1/mIoU=(0.6, 0.5, 0.5454545454545454, 0.27262901529003636) test AUC/F1/mIoU=(0.5394, 0.56, 0.5925925925925926, 0.13613294465526057)
+/pfm/disks/core/lxbo/miniconda3/envs/fbfn/lib/python3.10/site-packages/torch/utils/checkpoint.py:1399: FutureWarning: `torch.cpu.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cpu', args...)` instead.
+  with device_autocast_ctx, torch.cpu.amp.autocast(**cpu_autocast_kwargs), recompute_context:  # type: ignore[attr-defined]
+[ WARN:0@278.116] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@278.500] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@278.553] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@279.810] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@279.811] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@279.870] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@279.922] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@279.976] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@279.992] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@280.051] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@280.062] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@280.109] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@280.116] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@280.189] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@280.247] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@282.187] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@282.244] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+ep14 loss=1.558 val AUC/F1/mIoU=(0.61, 0.5, 0.5454545454545454, 0.28112831414101425) test AUC/F1/mIoU=(0.5482, 0.57, 0.5904761904761905, 0.14460120399975268)
+/pfm/disks/core/lxbo/miniconda3/envs/fbfn/lib/python3.10/site-packages/torch/utils/checkpoint.py:1399: FutureWarning: `torch.cpu.amp.autocast(args...)` is deprecated. Please use `torch.amp.autocast('cpu', args...)` instead.
+  with device_autocast_ctx, torch.cpu.amp.autocast(**cpu_autocast_kwargs), recompute_context:  # type: ignore[attr-defined]
+[ WARN:0@295.729] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@296.163] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@296.223] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@297.799] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@297.812] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@297.865] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@297.923] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@297.982] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@298.060] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@298.064] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@298.132] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@298.142] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@298.209] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@298.296] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@298.359] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@300.341] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+[ WARN:0@300.402] global grfmt_tiff.cpp:123 TIFF_Warning TIFFReadDirectory: Unknown field with tag 59932 (0xea1c) encountered
+ep15 loss=1.573 val AUC/F1/mIoU=(0.6100000000000001, 0.6, 0.7142857142857143, 0.26389745376133245) test AUC/F1/mIoU=(0.5528, 0.53, 0.6618705035971223, 0.14972922481516035)
+saved /pfm/disks/core/lxbo/work/fbfn_project/code/fbfn/runs_type/cov_adapted.pth
