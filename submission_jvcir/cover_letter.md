@@ -1,6 +1,6 @@
 Dear Editor-in-Chief,
 
-I am pleased to submit our manuscript entitled **"Interpretable Four-Branch Attention Fusion Network for Image Tampering Detection, Type Classification, and Localization"** for consideration in the *Journal of Visual Communication and Image Representation*.
+We are pleased to submit our manuscript entitled **"Interpretable Four-Branch Attention Fusion Network for Image Tampering Detection, Type Classification, and Localization"** for consideration in the *Journal of Visual Communication and Image Representation*.
 
 Real-world anti-fraud investigation requires more than a real/fake score: investigators need the manipulation type and the altered region, and the detector must survive JPEG compression and resizing introduced by social-media distribution. Our work makes three contributions:
 
@@ -14,6 +14,6 @@ We would be grateful for your consideration and look forward to the reviewers' c
 
 Sincerely,
 
-Jie Lu (卢杰)
+Jie Lu (卢杰), Xiaobo Li (李晓波)
 Taiyuan University of Technology, Taiyuan, Shanxi, China
-Email: lujie123456bhjcyx@qq.com
+Corresponding author: Jie Lu, lujie123456bhjcyx@qq.com
