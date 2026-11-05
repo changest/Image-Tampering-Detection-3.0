@@ -5,6 +5,7 @@
 Taiyuan University of Technology, Taiyuan, Shanxi, China
 
 Corresponding author: Xiaobo Li, lixiaobo@tyust.edu.cn, tel. 13834565350
+Co-author email: Jie Lu, lujie123456bhjcyx@qq.com
 Co-author email: Chuntong Jiang, 2796959858@qq.com
 Co-author contact: Mingqian Li, limingqian@tyust.edu.cn, tel. 15135151901
 Co-author contact: Fulan Wang, wangfulan@tyust.edu.cn, tel. 15235278416
