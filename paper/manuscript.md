@@ -198,6 +198,8 @@ Joint training raises type macro-F1 from 0.718 to 0.849 and segmentation mIoU fr
 
 We also tested logit ensembling of ep20(EMA) and ep30: it improves AUC by only ~0.001 and type F1 by ~0.3 points at twice the inference cost, so the deployed system does not ensemble. The final configuration uses ep30 (threshold 0.18, T 1.88) for binary detection and segmentation, and ep20(EMA) for type classification.
 
+**Binary score fusion.** Because small tampered regions are easily diluted by global average pooling, we fuse the binary logit with the max-pooled response of the fused evidence map. The normalization constants and weight are fitted on even-indexed validation samples (α=0.75) and evaluated on odd-indexed samples: AUC increases from 0.9634 to 0.9676, and on the held-out half from 0.9605 to 0.9667 (+0.0062). Logit ensembling of the three checkpoints brings no gain (0.9612–0.9639). The fusion improves ranking only and does not change accuracy at the optimal threshold, so it is used for offline review ranking rather than replacing the online probability output.
+
 **Limitations.** Copy-move recall is about 74.8% and these images are often classified as real; splice images perform best (recall ≈86%). The optimal threshold is fitted on CASIA and must be recalibrated for other domains, and the validation set covers CASIA only, so cross-dataset generalization remains to be evaluated.
 
 ### 4.7 Deployment and inference acceleration
