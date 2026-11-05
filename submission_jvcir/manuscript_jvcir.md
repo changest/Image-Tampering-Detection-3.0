@@ -299,7 +299,7 @@ The GenImage benchmark used in this study is publicly available via the TIGAS mi
 
 ## Figure captions
 
-**Fig. 1.** Overview of FBFN v3.0. Four evidence branches (CNN with ResNet-34 + UNet++; DINOv2 ViT-L/14 at 448×448; ELA/SRM noise; Lab + local entropy) produce one-channel evidence maps. A channel-and-spatial dual attention module fuses them into a single evidence map, which is used for localization; a shared 128-dimensional trunk feeds the authenticity and four-class type heads. The model is trained jointly with BCE, Dice, and class-weighted cross-entropy losses. The bottom panels summarize robustness under JPEG compression, resizing, and blur, and the deployment metrics (AUC, type F1, localization mIoU, latency).
+**Fig. 1.** Architecture of FBFN v3.0. An input image (448 × 448 × 3) is processed by four evidence branches: a CNN branch (ResNet-34 + UNet++), a DINOv2 ViT-L/14 branch, a noise branch (ELA + SRM), and a color branch (Lab + local entropy). Each branch produces a one-channel evidence map; a channel-and-spatial dual-attention module fuses them into a single map that is used for localization, while a shared 128-dimensional trunk feeds the authenticity and four-class type heads. The model is trained with L = L_seg + 0.5 L_bin + 0.5 L_type, where L_seg combines BCE and Dice and L_type is a class-weighted cross-entropy.
 
 **Fig. 2.** Branch evidence maps for a real image (top) and a manipulated image (bottom). Each column shows one branch's pixel-level forgery probability (warmer colors indicate higher probability); the fused map combines the four streams. Noise and color branches expose residual and color-statistical artifacts that are not visible in the RGB input.
 
