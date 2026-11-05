@@ -1,5 +1,5 @@
-• A four-branch fusion network jointly predicts authenticity, tampering type, and localization.
-• On real CASIA it reaches AUC 0.969, type macro-F1 0.849, and localization mIoU 0.603.
-• JPEG/resize/blur augmentation raises JPEG q90 AUC from 0.850 to 0.888 with no clean loss.
+• A four-branch network jointly predicts authenticity, type, and localization.
+• On real CASIA: AUC 0.969, type F1 0.849, localization mIoU 0.603.
+• JPEG/resize/blur augmentation raises JPEG q90 AUC from 0.850 to 0.888.
 • bf16 inference runs in 34 ms per image on an A40 without measurable accuracy loss.
 • Same-protocol TruFor comparison and a COVERAGE cross-dataset limitation are reported.
