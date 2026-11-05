@@ -297,6 +297,12 @@ The GenImage benchmark used in this study is publicly available via the TIGAS mi
 
 [16] Wen, B., Zhu, Y., Subramanian, R., Ng, T.-T., Shen, X., Winkler, S.: "COVERAGE — A novel database for copy-move forgery detection" Proc. IEEE Int. Conf. Image Process., 2016, pp. 161–165.
 
+## Figure captions
+
+**Fig. 1.** Overview of FBFN v3.0. Four evidence branches (CNN with ResNet-34 + UNet++; DINOv2 ViT-L/14 at 448×448; ELA/SRM noise; Lab + local entropy) produce one-channel evidence maps. A channel-and-spatial dual attention module fuses them into a single evidence map, which is used for localization; a shared 128-dimensional trunk feeds the authenticity and four-class type heads. The model is trained jointly with BCE, Dice, and class-weighted cross-entropy losses.
+
+**Fig. 2.** Branch evidence maps for a real image (top) and a manipulated image (bottom). Each column shows one branch's pixel-level forgery probability (warmer colors indicate higher probability); the fused map combines the four streams. Noise and color branches expose residual and color-statistical artifacts that are not visible in the RGB input.
+
 ## References
 
 [1] Zhu, M., Chen, H., Yan, Q., et al.: "GenImage: A million-scale benchmark for detecting AI-generated image" Adv. Neural Inf. Process. Syst., 2023, 36.
