@@ -374,7 +374,27 @@ def build():
              "我们也试过案例记忆和分辨率路由，都没有超过这条曲线，这是可以公开的负结果。"
              "部署时用 bf16 推理：A40 上模型 34 毫秒、端到端 81 毫秒，完整验证集精度差异不超过 0.0005。")
 
-    # 11 Demo
+    # 11 五档能力映射
+    s = slide(prs); n += 1
+    header(s, "五档能力映射：从快筛到旗舰", "借用 Claude 模型命名，按能力与场景给不同权重定位")
+    table(s, Inches(0.75), Inches(1.7), Inches(11.8),
+          ["档位", "气质", "对应模型", "使用场景"],
+          [["Haiku", "极简 · 轻量 · 高效", "廉价特征级联", "大批量初筛，3–19 ms"],
+           ["Sonnet", "均衡 · 稳定 · 默认", "last_ema", "在线检测默认档"],
+           ["Opus", "旗舰 · 上限最高", "ep30_raw", "离线复核与论文基准"],
+           ["Fable", "亲和 · 会讲清楚", "ep20_ema", "篡改类型解释"],
+           ["Mythos", "体系化 · 完整叙事", "FBFN v3.0 整套系统", "四支证据 + 多任务 + 鲁棒部署"]],
+          col_ratios=[1.5, 2.8, 3.0, 4.2], font=14, row_h=Inches(0.62))
+    text(s, L, Inches(6.15), Inches(12.0), Inches(0.4),
+         "命名只是类比：五档共享同一套证据结构，区别在用途与工作点，而不是模型规模。",
+         size=12, color=MUTED)
+    footer(s, n)
+    notes(s, "这一页借用 Claude 的命名，把四种权重和整套系统按能力场景定位。"
+             "Haiku 是级联快筛，Sonnet 是默认的 last_ema，Opus 是 clean 上限最高的 ep30，"
+             "Fable 是擅长讲清类型的 ep20_ema，Mythos 则是完整的 FBFN v3.0 系统。"
+             "重点强调：这不是说它们规模不同，而是同源模型在不同工作点上的取舍。")
+
+    # 12 Demo
     s = slide(prs); n += 1
     header(s, "上传即得判定、类型与热图", "本地 RTX 5060 或 A40 服务器（bf16，端到端 81 ms）")
     pic(s, os.path.join(FIG, "demo_screenshot.png"), Inches(0.6), Inches(1.55),
