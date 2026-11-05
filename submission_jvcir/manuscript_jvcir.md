@@ -1,6 +1,6 @@
 # Interpretable Four-Branch Attention Fusion Network for Image Tampering Detection, Type Classification, and Localization
 
-**Jie Lu (卢杰), Xiaobo Li (李晓波), Chuntong Jiang (姜春彤), Mingqian Li (李明倩), Fulan Wang (汪福兰)**
+**Jie Lu (卢杰), Xiaobo Li (李晓波), Chuntong Jiang (姜春彤), Mingqian Li (李明倩), Zeqing Li (李泽清), Fulan Wang (汪福兰)**
 
 Taiyuan University of Technology, Taiyuan, Shanxi, China
 
@@ -8,6 +8,7 @@ Corresponding author: Xiaobo Li, lixiaobo@tyust.edu.cn, tel. 13834565350
 Co-author email: Jie Lu, lujie123456bhjcyx@qq.com
 Co-author email: Chuntong Jiang, 2796959858@qq.com
 Co-author contact: Mingqian Li, limingqian@tyust.edu.cn, tel. 15135151901
+Co-author contact: Zeqing Li, lizeqing01@163.com, tel. 18735386416
 Co-author contact: Fulan Wang, wangfulan@tyust.edu.cn, tel. 15235278416
 
 
@@ -303,7 +304,7 @@ This work was supported by [funding source and grant number — to be completed 
 
 ## CRediT authorship contribution statement
 
-Jie Lu: Conceptualization, Methodology, Software, Validation, Formal analysis, Investigation, Data curation, Writing – original draft, Writing – review & editing, Visualization. Xiaobo Li: Conceptualization, Supervision, Resources, Writing – review & editing. Chuntong Jiang: Data curation, Validation, Writing – review & editing. Mingqian Li: Data curation, Validation, Writing – review & editing. Fulan Wang: Investigation, Validation, Writing – review & editing.
+Jie Lu: Conceptualization, Methodology, Software, Validation, Formal analysis, Investigation, Data curation, Writing – original draft, Writing – review & editing, Visualization. Xiaobo Li: Conceptualization, Supervision, Resources, Writing – review & editing. Chuntong Jiang: Data curation, Validation, Writing – review & editing. Mingqian Li: Data curation, Validation, Writing – review & editing. Zeqing Li: Data curation, Validation, Writing – review & editing. Fulan Wang: Investigation, Validation, Writing – review & editing.
 
 ## Declaration of competing interest
 
